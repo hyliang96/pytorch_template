@@ -1,7 +1,5 @@
-from model import Net
 import torch
 from torch import nn
-from torch import optim
 import os
 import warnings
 
@@ -37,12 +35,7 @@ torch.nn.Module._state_dict = _state_dict
 class State(object):
     def __init__(self, args):
         self.args = args
-
-        self.model = Net()
-        self.optimizer = optim.SGD(self.model.parameters(), lr=args.lr, momentum=args.momentum)
-        # self.optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
-        # self.loss = get_loss(args)
-
+    
     def deploy(self):
         self.model = nn.DataParallel(self.model)
         self.model.to(self.args.device)

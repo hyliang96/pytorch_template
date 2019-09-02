@@ -9,7 +9,7 @@ args.input_size = 5
 args.output_size = 2
 
 args.epochs=10
-args.log_interval = 10
+args.pbar_interval = 1
 
 args.batch_size = 64
 args.test_batch_size = 512
@@ -21,8 +21,13 @@ args.momentum = 0.5
 args.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 args.use_cuda = torch.cuda.is_available()
 
-args.load_path = os.path.join('../__checkpoint__', '45gpu.pth')
-args.save_path = os.path.join('../__checkpoint__', '45gpu.pth')
+args.root = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), # get absoltae path to the dir this file is in
+    '..')
+args.load_path = os.path.join(args.root, '__checkpoint__', '45gpu.pth')
+args.save_path = os.path.join(args.root, '__checkpoint__', '45gpu.pth')
 
-args.data_path = os.path.join('../__data__')
+args.data_path = os.path.join(args.root, '__data__')
+args.tensorboard_path = os.path.join(args.root, '__tensorboard__')
+args.log_path = os.path.join(args.root, '__log__', '1.log')
 

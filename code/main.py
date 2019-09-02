@@ -5,33 +5,44 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import os
+from torch.utils.tensorboard.writer import SummaryWriter
 
 from get_data import get_data
 from args import args
 from get_model import State
 from epoch import run_epoch
+from log import Log
+from tqdm import tqdm
+
+from model import Net
+from torch import optim
+
 
 def main(args):
-    train_loader = get_data(args, 'train')
-    test_loader = get_data(args, 'test')
-
     s = State(args)
+    s.log = Log(args.log_path)
+    s.writer = SummaryWriter(log_dir=args.tensorboard_path)
+
+    s.model = Net()
+    s.optimizer = optim.SGD(s.model.parameters(), lr=args.lr, momentum=args.momentum)
+
     # s.load()
     s.deploy()
-    
-    # for data, target in dataloader:
-    #     input_var = data.to(args.device)
-    #     output = s.model(input_var)
-    #     print("Outside: input size", input_var.size(),
-    #         "args.output_size", output.size())
 
+    train_loader = get_data(args, 'train')
+    test_loader = get_data(args, 'test')
+    
     for s.epoch in range(0, args.epochs):
+        s.epoch_pbar = tqdm(bar_format='{desc}', leave=True, desc = 'Epoch {} |'.format(s.epoch))
         run_epoch('train', s, train_loader )
         run_epoch('test',  s, test_loader  )
-        # train(args, s.model, s.args.device, train_loader, s.optimizer, epoch)
-        # test(args, s.model, s.args.device, test_loader, epoch)
+        # s.log.tofile(s.epoch_pbar.desc)
+        # close_and_leave(s.epoch_pbar)
+        s.epoch_pbar.close()
 
     s.save()
+    s.writer.close()
+    s.log.close()
 
 if __name__ == "__main__":
     main(args)

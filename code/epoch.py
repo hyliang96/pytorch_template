@@ -50,6 +50,7 @@ def run_epoch(stage, state, data_loader):
         state.model.eval()
 
     pbar = tqdm(initial=0, total=len(data_loader), leave=False)
+
     _loss = AverageValueMeter()
     _acc = ClassErrorMeter(accuracy=True)
     _conf = ConfusionMeter(k=10, normalized=True)
@@ -63,20 +64,29 @@ def run_epoch(stage, state, data_loader):
         if stage=='train':
             loss.backward()
             state.optimizer.step()
+            state.writer.add_scalar(stage+' loss-iter', loss.mean(), 
+                (batch_idx + state.epoch*len(data_loader)) )
+                # * data.size()[0]  )
+
 
         _loss.add(loss.mean().item())
         _acc.add(output, target)
         _conf.add(output, target)
 
-        if batch_idx % state.args.log_interval == 0:
-            pbar.desc = '{:6s} Epoch {}:'.format(stage, state.epoch)
-            pbar.postfix = 'Loss {:.4f} Acc {:.4f}%'.format(
-                _loss.value(), _acc.value())
-            pbar.update(state.args.log_interval)
+        if batch_idx % state.args.pbar_interval == 0:
+            pbar.desc = '{:6s}'.format(stage)
+            pbar.postfix = 'Loss {:.4f} Acc {:.4f}%'.format(_loss.value(), _acc.value())
+            pbar.update(state.args.pbar_interval)
 
     pbar.close()
-    print('{:6s} Epoch {}: loss {:.4f}, Acc {:.4f}%'.format(
-        stage, state.epoch, _loss.value(), _acc.value()))
+    state.epoch_pbar.desc += ' {:6s}: loss {:.4f}, Acc {:.4f}% |'.format(stage, _loss.value(), _acc.value())
+    state.epoch_pbar.update()
+
+    if stage!='train':
+        state.writer.add_scalar(stage+' avg_loss-epoch', _loss.value(), state.epoch)
+        state.writer.add_scalar(stage+' avg_acc-epoch',  _acc.value(),  state.epoch)
+
+
 
     # conf = _conf.value()
     # np.array([k,k]), 纵坐标是输入，横坐标是预测
