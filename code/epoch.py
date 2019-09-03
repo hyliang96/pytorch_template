@@ -2,44 +2,12 @@
 # -*- coding: utf-8 -*-
 import torch
 import torch.nn.functional as F
-from tqdm import tqdm
-import torchnet.meter as meter
-from functools import wraps
 import numpy as np
 
-def detach_input(f):
-    @wraps(f)
-    def _f(*args, **wargs):
-        args = [arg.detach() if type(arg)==torch.Tensor else arg for arg in args ]
-        wargs = { key : arg.detach() if type(arg)==torch.Tensor else arg for key,arg in wargs.items() }
-        return f(*args, **wargs)
-    return _f
+from utils import *
 
-class ClassErrorMeter(meter.ClassErrorMeter):
-    @detach_input
-    def add(self, *args, **wargs):
-        return super().add(*args, **wargs)
-
-    def value(self, *args, **wargs):
-        value = super().value(*args, **wargs)
-        if type(value)==list and len(value)==1:
-            return value[0]
-        else:
-            return value
-
-class AverageValueMeter(meter.AverageValueMeter):
-    @detach_input
-    def add(self, *args, **wargs):
-        return super().add(*args, **wargs)
-
-    def value(self):
-        return super().value()[0]
-    # 变量 std
-
-class ConfusionMeter(meter.ConfusionMeter):
-    @detach_input
-    def add(self, *args, **wargs):
-        return super().add(*args, **wargs)
+from tqdm import tqdm
+import torchnet.meter as meter
 
 
 def run_epoch(stage, state, data_loader):
@@ -51,9 +19,9 @@ def run_epoch(stage, state, data_loader):
 
     pbar = tqdm(initial=0, total=len(data_loader), leave=False)
 
-    _loss = AverageValueMeter()
-    _acc = ClassErrorMeter(accuracy=True)
-    _conf = ConfusionMeter(k=10, normalized=True)
+    _loss = meter.AverageValueMeter()
+    _acc = meter.ClassErrorMeter(accuracy=True)
+    _conf = meter.ConfusionMeter(k=10, normalized=True)
 
     for batch_idx, (data, target) in enumerate(data_loader):
         data, target = data.to(state.args.device), target.to(state.args.device)

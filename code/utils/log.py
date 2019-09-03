@@ -4,7 +4,8 @@ from __future__ import print_function
 
 import sys
 import time
-from tqdm import tqdm 
+import tqdm as tq
+# from tqdm import tqdm 
 
 # 支持在python2、3下调用本文件
 
@@ -23,8 +24,6 @@ class Log(object):
 # 直到log.close()，print才变为只输出到屏幕
 
 # 可配合tqdm使用，tqdm 在屏幕上清屏进度条，则输出到log文件也清屏进度条
-
-
 
     def __init__(self, filename='', mode='w'):
         # filename =
@@ -56,41 +55,6 @@ class Log(object):
         self.flush()
         self.f.close()
         sys.stdout=sys.__stdout__
-
-# class mytqdm(tqdm):
-#     def __init__(self, *args, **wargs):
-#         super(mytqdm, self).__init__(*args, **wargs)
-#         self.has_output = False
-
-#     def close(self):
-#         super(mytqdm,self).close()
-#         if sys.stdout != sys.__stdout__ and self.leave and (not self.has_output):
-#             string = self.__repr__()
-#             print("<<<", string, ">>>")
-#             self.has_output = True
-#             sys.stdout.f.write(string+'\n')
-#             sys.stdout.f.flush()
-
-
-# def close_and_leave(pbar):
-#     if sys.stdout != sys.__stdout__ and self.leave:
-#         string = pbar.__repr__()
-#         sys.stdout.f.write(string+'\n')
-#         sys.stdout.f.flush()
-#         pbar.close()
-
-def close_and_leave(f):
-    import sys
-    def _f(self, *args, **wargs):
-        if not hasattr(self, 'entered_close'):
-            self.entered_close = True
-            if sys.stdout != sys.__stdout__ and self.leave:
-                string = self.__repr__()
-                sys.stdout.f.write(string+'\n')
-                sys.stdout.f.flush()
-            f(self, *args, **wargs)
-    return _f
-tqdm.close = close_and_leave(tqdm.close)
 
 def cursor_back(func):
     # 光标回到所在行首，且只输出到屏幕，不输出到别处

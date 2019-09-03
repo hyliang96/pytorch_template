@@ -2,13 +2,8 @@ import torch
 from torch import nn
 import os
 import warnings
+from utils import *
 
-def _state_dict(self):
-    if hasattr(self, 'module'):
-        return self.module.state_dict()
-    else:
-        return self.state_dict()
-torch.nn.Module._state_dict = _state_dict
 
 # def _save(self, save_path):
 #     torch.save(self._state_dict(), save_path)
@@ -40,8 +35,8 @@ class State(object):
         self.model = nn.DataParallel(self.model)
         self.model.to(self.args.device)
 
-    def save(self):
-        torch.save(self.model._state_dict(), self.args.save_path)
+    def save(self, path):
+        torch.save(self.model.state_dict(), path)
 
     def load(self):
         if os.path.isfile(self.args.load_path):
