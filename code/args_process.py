@@ -3,7 +3,22 @@ import os
 import time
 import argparse
 
+
+
+def _parse_add_to(args):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--exper', type=str, default=args.exper, help='the name of this set of experiment')
+    new_args = parser.parse_args()
+    print('new_args', new_args)
+
+    for key,value in vars(new_args).items():
+        setattr(args, key, value)
+    print('args.exper', args)
+    return args
+
 def _process(args):
+    _parse_add_to(args)
+
     # 后处理 argument
     args.use_cuda = torch.cuda.is_available()
     args.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -58,3 +73,5 @@ def _process(args):
 
 
 argparse.Namespace.process = _process
+
+

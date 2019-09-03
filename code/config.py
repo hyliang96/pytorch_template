@@ -1,7 +1,5 @@
 import args_process, argparse
-# parser = argparse.ArgumentParser()
-# parser.add_argument('--exper', type=str, default='', help='the name of this set of experiment')
-# args = parser.parse_args()
+
 args = argparse.Namespace()
 
 # ----------------------------------------------------------------------------------------------
@@ -23,14 +21,16 @@ args.momentum = 0.5
 
 args.phases = ['train', 'test'] # 'train', 'test', 'val'
 
-args.exper = "exper1"
-args.experid = '0'
+args.exper = ""
+args.experid = ''
 
 # 若写下属任意一个，则load，否则不load
 # 继续训练，或测试某个epoch的checkpoint
-args.continue_epoch = "latest" # 'latest', 'best', '0', '1', '2' ...
+args.continue_epoch = "" # 'latest', 'best', '0', '1', '2' ...
 # 单纯加载，不必继续训练，建议写绝对路径
 args.load_path = ""
 
 # ----------------------------------------------------------------------------------------------
+# merge argparse and this
+
 args.process()
