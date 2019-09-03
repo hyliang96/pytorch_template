@@ -21,12 +21,15 @@ args.data_size = 100 # dataset size
 args.lr = 0.01
 args.momentum = 0.5
 
-args.phases = ['train', 'test']
+args.phases = ['train', 'test'] # 'train', 'test', 'val'
 
 args.exper = "exper1"
 args.experid = '0'
+
 # 若写下属任意一个，则load，否则不load
-args.continue_epoch = "2" # 此即继续训练之意，或测试某个epoch的checkpoint
+# 继续训练，或测试某个epoch的checkpoint
+args.continue_epoch = "latest" # 'latest', 'best', '0', '1', '2' ...
+# 单纯加载，不必继续训练，建议写绝对路径
 args.load_path = ""
 
 # ----------------------------------------------------------------------------------------------
