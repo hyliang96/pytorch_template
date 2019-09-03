@@ -32,7 +32,7 @@ def run_epoch(stage, state, data_loader):
         if stage=='train':
             loss.backward()
             state.optimizer.step()
-            state.writer.add_scalar(stage+' loss-iter', loss.mean(), 
+            state.writer.add_scalar(stage+' loss-iter', loss.mean(),
                 (batch_idx + state.epoch*len(data_loader)) )
                 # * data.size()[0]  )
 
@@ -54,7 +54,7 @@ def run_epoch(stage, state, data_loader):
         state.writer.add_scalar(stage+' avg_loss-epoch', _loss.value(), state.epoch)
         state.writer.add_scalar(stage+' avg_acc-epoch',  _acc.value(),  state.epoch)
 
-
+    return  _loss.value(), _acc.value()
 
     # conf = _conf.value()
     # np.array([k,k]), 纵坐标是输入，横坐标是预测

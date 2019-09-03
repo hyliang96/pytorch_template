@@ -1,6 +1,6 @@
 from torch.utils.tensorboard.writer import SummaryWriter
 import threading
-import os
+import os, sys, signal
 
 def Tensorboard(log_dir):
     def _launch_tensorboard(log_dir, output=None):
@@ -14,3 +14,10 @@ def Tensorboard(log_dir):
     p = launch_tensorboard(log_dir)
     writer = SummaryWriter(log_dir=log_dir)
     return writer
+
+# def _quit(signum, frame):
+#     print('You choose to stop me.')
+#     sys.exit()
+
+# signal.signal(signal.SIGINT, _quit)
+# signal.signal(signal.SIGTERM, _quit)

@@ -5,7 +5,7 @@ from __future__ import print_function
 import sys
 import time
 import tqdm as tq
-# from tqdm import tqdm 
+# from tqdm import tqdm
 
 # 支持在python2、3下调用本文件
 
