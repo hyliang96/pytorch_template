@@ -17,7 +17,7 @@ def run_epoch(stage, state, data_loader):
     else:
         state.model.eval()
 
-    pbar = tqdm(initial=0, total=len(data_loader), leave=False)
+    pbar = tqdm(total=len(data_loader), leave=False)
 
     _loss = meter.AverageValueMeter()
     _acc = meter.ClassErrorMeter(accuracy=True)
