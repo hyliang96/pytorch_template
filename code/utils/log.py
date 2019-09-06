@@ -29,6 +29,7 @@ class Log(object):
         # filename =
          # time.strftime("%m-%d_%H:%M:%S", time.localtime())+filename
         self.f = open(filename, mode)
+        self.old_stdout = sys.stdout
         sys.stdout = self
         print('====== log start ======',
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
@@ -37,7 +38,8 @@ class Log(object):
 
     def write(self, data):
         self.f.write(data)
-        sys.__stdout__.write(data)
+        # sys.__stdout__.write(data)
+        self.old_stdout.write(data)
 
     def flush(self):
         # 例
@@ -46,7 +48,8 @@ class Log(object):
         # 可使"xxxx"立即输出到屏幕和文件；
         # 若不"log.flush()"，则要等到之后有换行的 print("xxxx")
         self.f.flush()
-        sys.__stdout__.flush()
+        # sys.__stdout__.flush()
+        self.old_stdout.flush()
 
     def close(self):
         print('======= log end =======',
@@ -54,7 +57,8 @@ class Log(object):
             '======')
         self.flush()
         self.f.close()
-        sys.stdout=sys.__stdout__
+        # sys.stdout=sys.__stdout__
+        sys.stdout = self.old_stdout
 
 def cursor_back(func):
     # 光标回到所在行首，且只输出到屏幕，不输出到别处
