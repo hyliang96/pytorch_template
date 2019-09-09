@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 if [ "$1" = 'help' ] || [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
     echo "Usage:"
     echo "gpuid [n,m,...] run.sh [experiment_name]         : commit a new experiment and tag it with its name"
