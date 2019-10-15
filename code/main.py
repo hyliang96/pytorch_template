@@ -34,15 +34,17 @@ def main(args):
 
     if args.load_path:
         s.load(s.args.load_path)
-    s.deploy()
 
     if 'train' in s.args.phases or 'val' in s.args.phases:
-        train_loader = get_data(s.args, 'train')
+        dummy_loader = train_loader = get_data(s.args, 'train')
     if 'test'  in s.args.phases:
-        test_loader  = get_data(s.args, 'test')
-    if 'train' in s.args.phases and 'test' in s.args.phases:
-            s.best = Max()
+        dummy_loader = test_loader  = get_data(s.args, 'test')
 
+    s.writer.add_model_graph(s.model, dummy_loader)
+    s.deploy()
+
+    if 'train' in s.args.phases and 'test' in s.args.phases:
+        s.best = Max()
     for s.epoch in range(s.args.start_epoch, s.args.start_epoch + s.args.n_epoch):
         s.epoch_pbar = tqdm(bar_format='{desc}', leave=True, desc = 'Epoch {} |'.format(s.epoch))
         if 'train' in s.args.phases:

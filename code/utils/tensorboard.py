@@ -23,6 +23,14 @@ def Tensorboard(log_dir):
     writer = SummaryWriter(log_dir=log_dir)
     return writer
 
+def _add_model_graph(self, model, dummy_loader):
+    dummy_input, dummy_label = dummy_loader.dataset[0]
+    dummy_input_batch = dummy_input.unsqueeze_(0)
+    return self.add_graph(model, (dummy_input_batch, ))
+SummaryWriter.add_model_graph = _add_model_graph
+
+
+
 # def _quit(signum, frame):
 #     print('You choose to stop me.')
 #     sys.exit()
