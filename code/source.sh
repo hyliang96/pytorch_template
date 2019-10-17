@@ -11,8 +11,8 @@ run()
 {
     if [ "$1" = 'help' ] || [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
         echo "Usage:"
+        echo "gpuid [n,m,...] run <experiment_name>                      : for a commited repo, tag it with its name, then run experiment"
         echo "gpuid [n,m,...] run <experiment_name> <git-commit-mesage>  : commit a new experiment and tag it with its name, then run experiment"
-        echo "gpuid [n,m,...] run <experiment_name>                      : tag it with its name, then run experiment"
         echo "gpuid [n,m,...] run --rerun(-r) <experiment_name>          : git checkout old tag and rerun the experiment"
     elif [ "$1" = '--rerun' ] || [ "$1" = '-r' ]; then
         if [ $# -ne 2 ]; then
