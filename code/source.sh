@@ -9,16 +9,16 @@ project_root=$(cd "$(dirname "${BASH_SOURCE[0]-$0}")"/..; pwd)
 # eval $(cat <<EOF
 run()
 {
-    if [ "$1" = 'help' ] || [ "$1" = '--help' ] || [ "$1" = '-h' ] || [ $# -eq 0 ]; then
+    if [ "$1" = 'help' ] || [ "$1" = '--help' ] || [ "$1" = '-h' ] || [ $# -ne 3 ]; then
         echo "Usage:"
-        echo "gpuid [n,m,...] run [experiment_name]         : commit a new experiment and tag it with its name"
-        echo "gpuid [n,m,...] run --rerun(-r) [experiment_name] : git checkout old tag and rerun the experiment"
+        echo "gpuid [n,m,...] run <experiment_name> <git-commit-mesage>  : commit a new experiment and tag it with its name"
+        echo "gpuid [n,m,...] run --rerun(-r) <experiment_name>          : git checkout old tag and rerun the experiment"
     elif [ "$1" = '--rerun' ] || [ "$1" = '-r' ]; then
         git checkout "$2" && \
         python3 ${project_root}/code/main.py --exper "$2"
     else
         git add -A ${project_root} && \
-        git commit -m "experiment" && \
+        git commit -m "experiment | $2" && \
         git tag -a "$1" -m "experiment" && \
         python3 ${project_root}/code/main.py --exper "$1"
     fi
