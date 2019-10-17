@@ -17,11 +17,12 @@ run()
         git checkout "$2" && \
         python3 ${project_root}/code/main.py --exper "$2"
     else
-        local git_return=$( git add -A ${project_root} &&
-            git commit -m "experiment | $2" )
-        if [[ "$git_return" =~ 'nothing to commit, working directory clean' ]]; then
-            git tag -a "$1" -m "experiment" && \
-            python3 ${project_root}/code/main.py --exper "$1"
+        if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
+            git add -A ${project_root} &&
+            git commit -m "$2"
+        fi
+        git tag -a "$1" -m "experiment" && \
+        python3 ${project_root}/code/main.py --exper "$1"
     fi
 }
 # EOF
