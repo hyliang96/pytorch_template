@@ -18,10 +18,12 @@ run()
         git checkout "$2" && \
         python3 ${project_root}/code/main.py --exper "$2"
     else
-        git add -A ${project_root} 
+        ( git add -A ${project_root} &&
         git commit -m "experiment | $2" && \
         git tag -a "$1" -m "experiment" && \
-        python3 ${project_root}/code/main.py --exper "$1"
+        python3 ${project_root}/code/main.py --exper "$1" ) ||
+        ( git tag -a "$1" -m "experiment" && \
+        python3 ${project_root}/code/main.py --exper "$1" )
     fi
 }
 # EOF
