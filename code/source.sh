@@ -9,7 +9,6 @@ project_root=$(cd "$(dirname "${BASH_SOURCE[0]-$0}")"/..; pwd)
 # eval $(cat <<EOF
 run()
 {
-    echo $#
     if [ "$1" = 'help' ] || [ "$1" = '--help' ] || [ "$1" = '-h' ] || [ $# -ne 2 ]; then
         echo "Usage:"
         echo "gpuid [n,m,...] run <experiment_name> <git-commit-mesage>  : commit a new experiment and tag it with its name"
@@ -18,12 +17,11 @@ run()
         git checkout "$2" && \
         python3 ${project_root}/code/main.py --exper "$2"
     else
-        ( git add -A ${project_root} &&
-        git commit -m "experiment | $2" && \
-        git tag -a "$1" -m "experiment" && \
-        python3 ${project_root}/code/main.py --exper "$1" ) ||
-        ( git tag -a "$1" -m "experiment" && \
-        python3 ${project_root}/code/main.py --exper "$1" )
+        local git_return=$( git add -A ${project_root} &&
+            git commit -m "experiment | $2" )
+        if [[ "$git_return" =~ 'nothing to commit, working directory clean' ]]; then
+            git tag -a "$1" -m "experiment" && \
+            python3 ${project_root}/code/main.py --exper "$1"
     fi
 }
 # EOF
