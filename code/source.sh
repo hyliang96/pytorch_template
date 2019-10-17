@@ -9,7 +9,7 @@ project_root=$(cd "$(dirname "${BASH_SOURCE[0]-$0}")"/..; pwd)
 # eval $(cat <<EOF
 run()
 {
-    if [ "$1" = 'help' ] || [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
+    if [ "$1" = 'help' ] || [ "$1" = '--help' ] || [ "$1" = '-h' ] || [ $# -eq 0 ]; then
         echo "Usage:"
         echo "gpuid [n,m,...] run [experiment_name]         : commit a new experiment and tag it with its name"
         echo "gpuid [n,m,...] run --rerun(-r) [experiment_name] : git checkout old tag and rerun the experiment"
