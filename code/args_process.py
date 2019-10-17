@@ -50,7 +50,7 @@ def _process(args):
     args.experid_path = os.path.join(args.exper_path, args.experid)
 
     #           checkpoint/
-    args.checkpoint_path = os.path.join(args.experid_path , 'checkpoint')
+    args.checkpoint_path = os.path.join(args.experid_path , 'checkpoints')
     os.makedirs(args.checkpoint_path, exist_ok=True)
     if args.continue_epoch:
         continue_epoch_path = os.path.join(args.checkpoint_path, 'epoch_'+args.continue_epoch+'.pth')
