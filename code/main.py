@@ -62,7 +62,7 @@ def main(args):
         if not 'train' in s.args.phases:
             break
 
-    s.writer.add_hparams(metric_dict={'test_acc':s.best.value})
+    s.writer.add_hparams(hparam_dict={}, metric_dict={'test_acc':s.best.value})
     s.writer.close()
     s.log.close()
 
