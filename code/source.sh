@@ -22,19 +22,26 @@ run()
         git checkout "$2" && \
         python3 ${project_root}/code/main.py --exper "$2"
     else
+        echo 1
         if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
+            echo 2
             if [ $# -ne 2 ]; then
+                echo 3
                 run help
                 return
             fi
+            echo 4
             git add -A ${project_root} &&
             git commit -m "$2"
         else
+            echo 5
             if [ $# -ne 1 ]; then
+                echo 6
                 run help
                 return
             fi
         fi
+        echo 7
 
         git tag -a "$1" -m "experiment" && \
         python3 ${project_root}/code/main.py --exper "$1"
