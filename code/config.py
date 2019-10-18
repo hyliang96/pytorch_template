@@ -8,7 +8,7 @@ args.input_size = 5
 args.output_size = 2
 
 args.start_epoch = 0
-args.n_epoch = 1
+args.n_epoch = 5
 args.save_interval = 1
 args.pbar_interval = 1
 

@@ -28,6 +28,7 @@ def main(args):
     print('args:')
     print(s.args)
     print('----------------------------------------------------------------------------------------------')
+    # s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={})
 
     s.model = Net()
     s.optimizer = optim.SGD(s.model.parameters(), lr=s.args.lr, momentum=s.args.momentum)
@@ -62,7 +63,8 @@ def main(args):
         if not 'train' in s.args.phases:
             break
 
-    s.writer.add_hparams(hparam_dict={}, metric_dict={'test_acc':s.best.value})
+    # s.writer.add_hparams(hparam_dict={}, metric_dict={'test_acc':s.best.value})
+    s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={'best_test_acc':s.best.value})
     s.writer.close()
     s.log.close()
 
