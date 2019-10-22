@@ -16,7 +16,7 @@ args.batch_size = 64
 args.test_batch_size = 512
 args.data_size = 100 # dataset size
 
-args.lr = 0.01
+args.lr = 0.001 # 0.01 is best
 args.momentum = 0.5
 
 args.phases = ['train', 'test'] # 'train', 'test', 'val'

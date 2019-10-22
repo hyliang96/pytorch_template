@@ -24,6 +24,11 @@ def _process(args):
     # 自动生成目录路径
     # project/
     #     code
+    #     __statictics__/
+    #         experiments.txt
+    #         metrics.txt, metrics.csv
+    #         metrics.txt, metrics.csv
+    #         <value-name>.txt, <value-name>.csv
     #     __data__/
     #     __result__/
     #         [exper]/
@@ -31,6 +36,8 @@ def _process(args):
     #                 log
     #                 tensorboard/
     #                 checkpoint/
+    #                 statistics/
+    #                      metrics.json
 
     # absolute path of this file and then goto its ../
     args.root_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
@@ -68,6 +75,10 @@ def _process(args):
 
     #           log
     args.log_path = os.path.join(args.experid_path , 'log')
+
+
+    args.table_path = os.path.join(args.experid_path , 'statistic')
+
 
 
 argparse.Namespace.process = _process

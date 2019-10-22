@@ -45,26 +45,29 @@ def main(args):
     s.deploy()
 
     if 'train' in s.args.phases and 'test' in s.args.phases:
-        s.best = Max()
+        s.best = Max('test-acc')
     for s.epoch in range(s.args.start_epoch, s.args.start_epoch + s.args.n_epoch):
         s.epoch_pbar = tqdm(bar_format='{desc}', leave=True, desc = 'Epoch {} |'.format(s.epoch))
         if 'train' in s.args.phases:
-            _, _   = run_epoch('train', s, train_loader )
+            _  = run_epoch('train', s, train_loader )
         if 'test' in s.args.phases:
-            _, acc = run_epoch('test',  s, test_loader  )
-            s.best.add(s.epoch, acc)
+            result = run_epoch('test',  s, test_loader  )
+        if 'train' in s.args.phases and 'test' in s.args.phases:
+            s.best.add(s.epoch, result)
         s.epoch_pbar.close()
 
         if 'train' in s.args.phases and (s.epoch - s.args.start_epoch) % s.args.save_interval == 0:
             s.save( os.path.join(s.args.checkpoint_path, 'epoch_'+str(s.epoch)+'.pth') )
             symlink_force('epoch_'+str(s.epoch)+'.pth', os.path.join(s.args.checkpoint_path, 'epoch_latest.pth'))
             if 'test' in s.args.phases:
-                symlink_force('epoch_'+str(s.best.key)+'.pth', os.path.join(s.args.checkpoint_path, 'epoch_best.pth'))
+                symlink_force('epoch_'+str(s.best.id())+'.pth', os.path.join(s.args.checkpoint_path, 'epoch_best.pth'))
         if not 'train' in s.args.phases:
             break
 
+
+
     # s.writer.add_hparams(hparam_dict={}, metric_dict={'test_acc':s.best.value})
-    s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={'best_test_acc':s.best.value})
+    # s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={'best_test_acc':s.best.value})
     s.writer.close()
     s.log.close()
 
