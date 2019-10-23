@@ -24,11 +24,10 @@ def _process(args):
     # 自动生成目录路径
     # project/
     #     code
-    #     __statictics__/
-    #         experiments.txt
-    #         metrics.txt, metrics.csv
-    #         metrics.txt, metrics.csv
-    #         <value-name>.txt, <value-name>.csv
+    #     __statictic__/
+    #         exper-list/deafult.txt -> selected.txt, finished.txt, <experiments>.txt
+    #         title/default.json->all.json, <titles>.txt
+    #         table/selected.csv, finished.csv <experiments-titles>.csv
     #     __data__/
     #     __result__/
     #         [exper]/
@@ -36,11 +35,10 @@ def _process(args):
     #                 log
     #                 tensorboard/
     #                 checkpoint/
-    #                 statistics/
-    #                      metrics.json
+    #                 statistic.json
 
     # absolute path of this file and then goto its ../
-    args.root_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
+    args.root_path = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
     args.data_path = os.path.join(args.root_path, '__data__')
 
     # __result__/
@@ -54,6 +52,7 @@ def _process(args):
     #       [experid]/
     dirnames = [d for d in os.listdir(args.exper_path) if os.path.isdir(os.path.join(args.exper_path, d)) and d[0]!=0]
     args.experid = args.experid or ( '0' if dirnames == [] else str(max([int(name) for name in dirnames]) + 1) )
+    args.expernameid = args.exper + '/' + args.experid
     args.experid_path = os.path.join(args.exper_path, args.experid)
 
     #           checkpoint/
@@ -68,16 +67,29 @@ def _process(args):
         else:
             args.start_epoch = int(args.continue_epoch)
     args.load_path = args.load_path or ( os.path.join(args.checkpoint_path, 'epoch_'+args.continue_epoch+'.pth') if args.continue_epoch else '')
-
     #           tensorboard/
     args.tensorboard_path = os.path.join(args.experid_path , 'tensorboard')
     os.makedirs(args.tensorboard_path, exist_ok=True)
-
     #           log
     args.log_path = os.path.join(args.experid_path , 'log')
+    #           statistic.json
+    # args.exper_stati_path = os.path.join(args.experid_path , 'statistic.json')
+
+    # __statistic__/
+    # args.stati_path = os.path.join(args.root_path , '__statistic__')
+    # os.makedirs(args.stati_path, exist_ok=True) # if no such path exists, iteratively created the dir
+    # #       exper-list/
+    # args.exper_list_path = os.path.join(args.stati_path , 'exper-list')
+    # os.makedirs(args.exper_list_path, exist_ok=True) # if no such path exists, iteratively created the dir
+    # #       title/
+    # args.title_path = os.path.join(args.stati_path , 'title')
+    # os.makedirs(args.title_path, exist_ok=True) # if no such path exists, iteratively created the dir
+    # #       table/
+    # args.table_path = os.path.join(args.stati_path , 'table')
+    # os.makedirs(args.table_path, exist_ok=True) # if no such path exists, iteratively created the dir
 
 
-    args.table_path = os.path.join(args.experid_path , 'statistic')
+
 
 
 

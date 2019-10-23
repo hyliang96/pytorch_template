@@ -8,8 +8,9 @@ from get_data import get_data
 from state import State
 from epoch import run_epoch
 
-from utils import *
 from tqdm import tqdm
+from utils import patch
+from utils.statistic import Statistic
 from utils.log import Log
 from utils.tensorboard import Tensorboard
 from utils.misc import Max, symlink_force
@@ -23,11 +24,13 @@ def main(args):
     s = State(args)
     s.log = Log(s.args.log_path)
     s.writer = Tensorboard(s.args.tensorboard_path)
+    s.stati  = Statistic(s.args.expernameid, s.args.experid_path, s.args.root_path)
 
     print('----------------------------------------------------------------------------------------------')
     print('args:')
     print(s.args)
     print('----------------------------------------------------------------------------------------------')
+    s.stati.add('hparam', s.args.dict())
     # s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={})
 
     s.model = Net()
@@ -60,7 +63,8 @@ def main(args):
             s.save( os.path.join(s.args.checkpoint_path, 'epoch_'+str(s.epoch)+'.pth') )
             symlink_force('epoch_'+str(s.epoch)+'.pth', os.path.join(s.args.checkpoint_path, 'epoch_latest.pth'))
             if 'test' in s.args.phases:
-                symlink_force('epoch_'+str(s.best.id())+'.pth', os.path.join(s.args.checkpoint_path, 'epoch_best.pth'))
+                symlink_force('epoch_' + str(s.best.id()) + '.pth', os.path.join(s.args.checkpoint_path, 'epoch_best.pth'))
+                s.stati.add('metric', s.best.data())
         if not 'train' in s.args.phases:
             break
 
@@ -68,6 +72,7 @@ def main(args):
 
     # s.writer.add_hparams(hparam_dict={}, metric_dict={'test_acc':s.best.value})
     # s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={'best_test_acc':s.best.value})
+    s.stati.close()
     s.writer.close()
     s.log.close()
 
