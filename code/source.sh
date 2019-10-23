@@ -4,7 +4,7 @@
 # if you want transfer symbolic link to true path, just change `pwd` to `pwd -P`
 project_root=$(cd "$(dirname "${BASH_SOURCE[0]-$0}")"/..; pwd)
 
-
+. ${project_root}/code/utils/statistic/source.sh
 
 # eval $(cat <<EOF
 run()
@@ -16,6 +16,8 @@ run()
         echo "gpuid [n,m,...] run --rerun(-r) <experiment_name>          : git checkout a git tag, then rerun the experiment"
     elif [ "$1" = '--rerun' ] || [ "$1" = '-r' ]; then
         if [ $# -ne 2 ]; then
+            echo "Gonna checkout to a node in git, while args number is not correct."
+            echo
             run help
             return
         fi
@@ -24,7 +26,8 @@ run()
     else
         if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
             if [ $# -ne 2 ]; then
-                echo "cutted"
+                echo "This is an uncommited status, while args number is not correct."
+                echo
                 run help
                 return
             fi
@@ -32,6 +35,8 @@ run()
             git commit -m "$2"
         else
             if [ $# -ne 1 ]; then
+                echo "This is a commited status, while args number is not correct."
+                echo
                 run help
                 return
             fi
