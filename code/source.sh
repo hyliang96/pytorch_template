@@ -24,6 +24,7 @@ run()
     else
         if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
             if [ $# -ne 2 ]; then
+                echo "cutted"
                 run help
                 return
             fi
