@@ -1,6 +1,6 @@
 from statistic import Statistic_Dir, parse_exper_file
 import sys, os
-import commentjson, json
+import json
 from jsoncomment import JsonComment
 import csv
 # import re
