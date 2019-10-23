@@ -14,27 +14,27 @@ if __name__ == "__main__":
 
     if len(argvs) == 0:
         result = os.popen('git tag -l --points-at HEAD 2>/dev/null').readlines()
-        result = [line for line in result if line != '']
+        result = [line for line in result if not re.search(r'^[\s]*$', line)]
         result = [line[:-1] if line[-1] == '\n'  else line for line in result ]
         tag = '\n'.join(result)
-        # tag = os.system('git tag -l --points-at HEAD')
         if tag == '':
             print('no tag on current commit!')
             sys.exit(1)
-
         exper_name_ids = [tag]
     else:
         exper_name_ids = argvs
-    exper_name_ids = '\n'.join(exper_name_ids)
-    # with open(record_path, 'r') as f:
-    #     last_line = f.readlines()[-1]
-    #     if re.search('\s', last_line):
 
 
-    with open(record_path, 'a') as f:
-            # f.write(f'\n{exper_name_id}')
-            # if last_line == ''
-        print('\n'+exper_name_ids, file=f, end='')
+
+
+    # exper_name_ids = '\n'.join(exper_name_ids)
+    for exper_name_id in exper_name_ids:
+        exper_name_id_path = os.path.join(path.root, '__result__', exper_name_id)
+        if not os.path.isdir(exper_name_id_path):
+            print('not existing path:',exper_name_id_path)
+            continue
+        with open(record_path, 'a') as f:
+            print('\n'+exper_name_id, file=f, end='')
 
 
 

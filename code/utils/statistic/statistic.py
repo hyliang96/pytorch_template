@@ -76,9 +76,9 @@ def parse_exper_file(exper_file):
         for line in f:
             if line[-1] == '\n':
                 line = line[:-1]
-            answer = re.search(r'^[\s]+$', line)
+            answer = re.search(r'^[\s]*$', line)
             if answer:
-               break
+                continue
             expers.append(line)
     return expers
 
