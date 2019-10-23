@@ -4,6 +4,10 @@ statistic_source=$(cd "$(dirname "${BASH_SOURCE[0]-$0}")"; pwd)
 
 
 alias record="python $statistic_source/add_to_record.py"
+alias title="python $statistic_source/make_title.py"
+alias table="python $statistic_source/make_table.py"
+
+
 
 
 # release this variable in the end of file

@@ -1,8 +1,9 @@
-# __all__ = ["Statistic"]
+__all__ = [ "Statistic"]
 
 import json
 import os
 import warnings
+import re
 
 
 class Statistic_Dir(object):
@@ -42,7 +43,10 @@ class Statistic(object):
 
 
     def add(self, tag, Dict, mode='cover'):
-        Dict = {str(key): str(value) for key, value in Dict.items()}
+        Dict = {str(key): '%.4f' % value if type(value) in [float ] \
+            else str(value) for key, value in Dict.items()}
+
+
         if mode not in ['replace', 'cover', 'add']:
             warnings.warn("mode "+mode+" is not in [replace|cover|add]; automatically set it to 'cover'.", SyntaxWarning)
             mode = 'cover'
@@ -56,6 +60,7 @@ class Statistic(object):
                 if mode != 'add' or key not in self.stati[tag].keys():
                     self.stati[tag][key] = value
 
+
         with open(self.exper_stati_path, 'w') as f:
             json.dump(self.stati, f, indent=4, ensure_ascii=False)
 
@@ -65,6 +70,17 @@ class Statistic(object):
         # pass
 
 
+def parse_exper_file(exper_file):
+    expers = []
+    with open(exper_file, 'r') as f:
+        for line in f:
+            if line[-1] == '\n':
+                line = line[:-1]
+            answer = re.search(r'^[\s]+$', line)
+            if answer:
+               break
+            expers.append(line)
+    return expers
 
 
 # def make_tables(exper_list_path, result_path, filenames, statistic_path):

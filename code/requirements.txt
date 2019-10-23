@@ -2,3 +2,4 @@ torch
 torchvision
 ipdb
 tqdm
+jsoncomment
