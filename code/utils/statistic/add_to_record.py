@@ -18,9 +18,15 @@ if __name__ == "__main__":
         result = [line[:-1] if line[-1] == '\n'  else line for line in result ]
         tag = '\n'.join(result)
         if tag == '':
-            print('no tag on current commit!')
+            print('No tag on current commit!')
             sys.exit(1)
-        exper_name_ids = [tag]
+        
+
+        exper_path = os.path.join(path.root, '__result__', tag)
+        dirnames = [d for d in os.listdir(exper_path) if os.path.isdir(os.path.join(exper_path, d)) and d[0]!=0]
+        biggestid = str(max([int(name) for name in dirnames]))
+        exper_name_id = tag+'/'+biggestid
+        exper_name_ids = [exper_name_id]
     else:
         exper_name_ids = argvs
 

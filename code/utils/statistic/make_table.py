@@ -50,6 +50,8 @@ def make_table(exper_set, title_set):
         writer = csv.writer(f)
         writer.writerows(table)
 
+    print('table made:', table_file)
+
 
 if __name__ == "__main__":
     exper_sets = sys.argv[1:]

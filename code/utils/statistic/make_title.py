@@ -10,8 +10,8 @@ def make_title(exper_set):
 
     exper_file = os.path.join(path.exper, exper_set+'.txt')
     title_file = os.path.join(path.title, title_set + '.json')
-    print('read experiments from', exper_file)
-    print('write titles to', title_file)
+    print('read experiments from:', exper_file)
+    print('write titles to:', title_file)
 
     expers = parse_exper_file(exper_file)
 
