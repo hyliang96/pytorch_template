@@ -4,7 +4,7 @@ args = argparse.Namespace()
 
 # ----------------------------------------------------------------------------------------------
 # 参数和数据定义
-args.input_size =  5
+args.input_size = 5
 args.output_size = 2
 
 args.start_epoch = 0
