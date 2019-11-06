@@ -1,6 +1,7 @@
 import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
+from utils.seed import set_work_init_fn
 # from dataset import RandomDataset
 
 transform=transforms.Compose([
@@ -14,19 +15,19 @@ def get_data(args, stage):
     if stage == 'train':
         dataloader = torch.utils.data.DataLoader(
             datasets.MNIST(args.data_path, train=True, download=True, transform=transform),
-            batch_size=args.batch_size, shuffle=True, **kwargs)
+            batch_size=args.batch_size, shuffle=True, worker_init_fn=set_work_init_fn(args.seed), **kwargs)
         # dataloader = DataLoader(dataset=RandomDataset(args.input_size, args.data_size),
         #                  batch_size=args.batch_size, shuffle=True)
     elif stage == 'val':
         dataloader = torch.utils.data.DataLoader(
             datasets.MNIST(args.data_path, train=True,  download=True, transform=transform),
-            batch_size=args.test_batch_size, shuffle=True, **kwargs)
+            batch_size=args.test_batch_size, shuffle=True, worker_init_fn=set_work_init_fn(args.seed), **kwargs)
         # dataloader = DataLoader(dataset=RandomDataset(args.input_size, args.data_size),
         #                  batch_size=args.batch_size, shuffle=True)
     elif stage == 'test':
         dataloader = torch.utils.data.DataLoader(
             datasets.MNIST(args.data_path, train=False,  download=True, transform=transform),
-            batch_size=args.test_batch_size, shuffle=True, **kwargs)
+            batch_size=args.test_batch_size, shuffle=True, worker_init_fn=set_work_init_fn(args.seed), **kwargs)
         # dataloader = DataLoader(dataset=RandomDataset(args.input_size, args.data_size),
         #                  batch_size=args.batch_size, shuffle=True)
     return dataloader

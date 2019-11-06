@@ -6,46 +6,93 @@ project_root=$(cd "$(dirname "${BASH_SOURCE[0]-$0}")"/..; pwd)
 
 . ${project_root}/code/utils/statistic/source.sh
 
-# eval $(cat <<EOF
+
 run()
 {
     if [ "$1" = 'help' ] || [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
         echo "Usage:"
-        echo "gpuid [n,m,...] run <experiment_name>                      : for a commited status, tag it with its name, then run experiment"
-        echo "gpuid [n,m,...] run <experiment_name> <git-commit-mesage>  : for a uncommited status, commit a new experiment and tag it with its name, then run experiment"
-        echo "gpuid [n,m,...] run --rerun(-r) <experiment_name>          : git checkout a git tag, then rerun the experiment"
-    elif [ "$1" = '--rerun' ] || [ "$1" = '-r' ]; then
-        if [ $# -ne 2 ]; then
-            echo "Gonna checkout to a node in git, while args number is not correct."
-            echo
-            run help
-            return
-        fi
-        git checkout "$2" && \
-        python3 ${project_root}/code/main.py --exper "$2"
+        # echo "gpuid [n,m,...] run <experiment_name>                      : for a commited status, tag it with its name, then run experiment"
+        echo "gpuid [n,m,...] run [--fix-seed|-f] <experiment_name>  : for a uncommited status, commit a new experiment and tag it with its name, then run experiment"
+        echo "gpuid [n,m,...] run --rerun(-r) <experiment_name>   : git checkout a git tag, then rerun the experiment"
+        return
+    fi
+
+    if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
+        echo 'Please commit or stash before run experiment'
+        return
+    fi
+
+    if [ "$1" = '--rerun' ] || [ "$1" = '-r' ]; then
+        shift
+        if [ $# -ne 1 ]; then echo "Can't get tag to rerun, while args number is not correct."; echo; run help; return; fi
+        local tag="$1"
+        git checkout "$tag" && \
+        python3 ${project_root}/code/main.py --exper "$tag"
     else
-        if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
-            if [ $# -ne 2 ]; then
-                echo "This is an uncommited status, while args number is not correct."
-                echo
-                run help
-                return
-            fi
-            git add -A ${project_root} &&
-            git commit -m "$2"
+        local seed_file="${project_root}/code/seed"
+        if [ "$1" = '--fix-seed' ] || [ "$1" = '--fix-seed' ]; then
+            shift
+            ( ! [ -f "$seed_file" ] ) &&  echo 0 > $seed_file
         else
-            if [ $# -ne 1 ]; then
-                echo "This is a commited status, while args number is not correct."
-                echo
-                run help
-                return
-            fi
+            echo $RANDOM > $seed_file
         fi
 
-        git tag -a "$1" -m "experiment" && \
-        python3 ${project_root}/code/main.py --exper "$1"
+        if [ $# -ne 1 ]; then echo "Can't get tag to set, args number is not correct."; echo; run help; return; fi
+        local tag="$1"
+
+        if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
+            git add -A ${project_root} &&
+            git commit -m "commit before run experiment"
+        fi
+
+        git tag -a "$tag" -m "run experiment" && \
+        python3 ${project_root}/code/main.py --exper "$tag"
     fi
 }
+
+
+alias rerun='run --rerun'
+
+# eval $(cat <<EOF
+# run()
+# {
+#     if [ "$1" = 'help' ] || [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
+#         echo "Usage:"
+#         echo "gpuid [n,m,...] run <experiment_name>                      : for a commited status, tag it with its name, then run experiment"
+#         echo "gpuid [n,m,...] run <experiment_name> <git-commit-mesage>  : for a uncommited status, commit a new experiment and tag it with its name, then run experiment"
+#         echo "gpuid [n,m,...] run --rerun(-r) <experiment_name>          : git checkout a git tag, then rerun the experiment"
+#     elif [ "$1" = '--rerun' ] || [ "$1" = '-r' ]; then
+#         if [ $# -ne 2 ]; then
+#             echo "Gonna checkout to a node in git, while args number is not correct."
+#             echo
+#             run help
+#             return
+#         fi
+#         git checkout "$2" && \
+#         python3 ${project_root}/code/main.py --exper "$2"
+#     else
+#         if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
+#             if [ $# -ne 2 ]; then
+#                 echo "This is an uncommited status, while args number is not correct."
+#                 echo
+#                 run help
+#                 return
+#             fi
+#             git add -A ${project_root} &&
+#             git commit -m "$2"
+#         else
+#             if [ $# -ne 1 ]; then
+#                 echo "This is a commited status, while args number is not correct."
+#                 echo
+#                 run help
+#                 return
+#             fi
+#         fi
+
+#         git tag -a "$1" -m "experiment" && \
+#         python3 ${project_root}/code/main.py --exper "$1"
+#     fi
+# }
 # EOF
 # )
 

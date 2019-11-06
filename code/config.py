@@ -19,6 +19,7 @@ args.data_size = 100 # dataset size
 args.lr = 0.001 # 0.01 is best
 args.momentum = 0.5
 
+
 args.phases = ['train', 'test'] # 'train', 'test', 'val'
 
 args.exper = ""
@@ -29,6 +30,8 @@ args.experid = ''
 args.continue_epoch = "" # 'latest', 'best', '0', '1', '2' ...
 # 单纯加载，不必继续训练，建议写绝对路径
 args.load_path = ""
+
+args.cudnn_behavoir = 'normal' # [ 'benchmark', 'normal', 'slow', 'none' ], cudnn 随机性从左到右减小，复现接近程度增加
 
 # ----------------------------------------------------------------------------------------------
 # merge argparse and this
