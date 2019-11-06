@@ -31,7 +31,8 @@ args.continue_epoch = "" # 'latest', 'best', '0', '1', '2' ...
 # 单纯加载，不必继续训练，建议写绝对路径
 args.load_path = ""
 
-args.cudnn_behavoir = 'slow' # [ 'benchmark', 'normal', 'slow', 'none' ], cudnn 随机性从左到右减小，复现接近程度增加
+# [ 'benchmark', 'normal', 'slow', 'none' ], cudnn 随机性从左到右减小，复现接近程度增加，一般用normal
+args.cudnn_behavoir = 'normal'
 
 # ----------------------------------------------------------------------------------------------
 # merge argparse and this
