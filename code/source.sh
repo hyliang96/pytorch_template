@@ -30,7 +30,7 @@ run()
         python3 ${project_root}/code/main.py --exper "$tag"
     else
         if [ $# -lt 1  ] || [ $# -gt 2 ]; then echo "Trying to set new tag, but args number is not correct."; echo; run help; return; fi
-        local tag="$1"
+        local tag="$1"; shift
 
         # 若tag是已有的，则报错，退出
         for i in $(git tag); do
