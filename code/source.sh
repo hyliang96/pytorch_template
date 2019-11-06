@@ -91,7 +91,6 @@ run()
 
         local seed_file="${project_root}/code/seed"
         if [ "$fix_seed" = true ]; then
-            shift
             ( ! [ -f "$seed_file" ] ) &&  echo 0 > $seed_file
         else
             echo $RANDOM > $seed_file
