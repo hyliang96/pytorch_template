@@ -61,7 +61,7 @@ run()
         # '--'后是 余参数
         --) shift ; break ;;
         # 处理参数的代码错误
-        *) echo "参数处理错误" ; exit 1 ;;
+        *) echo "arg parse error" ; return ;;
     esac ; done
 
     if [ "$help" = true ]; then
