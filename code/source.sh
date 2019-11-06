@@ -41,13 +41,13 @@ run()
     TEMP=$(getopt \
         -o      rfh \
         --long  rerun,fix-seed,help \
-        -n      '参数解析错误' \
+        -n      'arg parse error' \
         -- "$@")
     # 写法
         #   -o     短参数 不需要分隔符
         #   --long 长参数 用','分隔
         #   ``无选项  `:`必有选项  `::` 可有选项
-    if [ $? != 0 ] ; then echo "格式化的参数解析错误，正在退出" >&2; run --help ; exit 1 ; fi
+    if [ $? != 0 ] ; then echo "exiting for arg parse error\n" >&2;  run --help ; return ; fi
     eval set -- "$TEMP" # 将$TEMP复制给 $1, $2, ...
 
 
@@ -64,16 +64,18 @@ run()
         *) echo "参数处理错误" ; exit 1 ;;
     esac ; done
 
-    local tag="$1"; shift
-
     if [ "$help" = true ]; then
-        echo "Usage:"
-        # echo "gpuid [n,m,...] run <experiment_name>                      : for a commited status, tag it with its name, then run experiment"
-        echo "gpuid [n,m,...] run <experiment_name> [--fix-seed|-f]  : for a uncommited status, commit a new experiment and tag it with its name, then run experiment"
-        echo "gpuid [n,m,...] run --rerun(-r) <experiment_name>   : git checkout a git tag, then rerun the experiment"
+        echo "Usage: only usable under a git commited status"
+        echo "gpuid [n,m,...] run  -r|--rerun     <experiment_tag>   : git checkout an old experiment with tag and rerun it"
+        echo "gpuid [n,m,...] run [-f|--fix-seed] <experiment_tag>   : git tag and run a new experiment"
+        echo "   -f|--fix-seed  : fix the random seed as file \`./code/seed\` has. If the file does not exist, write 0 into it."
         return
     fi
 
+    if [ $# -ne 1 ]; then echo 'arg parse error: no <experiment_tag> input\n' >&2 ; run --help ; return ; fi
+    local tag="$1"; shift
+
+    # 若当前没有commit，则不可run
     if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
         echo 'Please commit or stash before run experiment'
         return
@@ -94,12 +96,12 @@ run()
         else
             echo $RANDOM > $seed_file
         fi
-
+        # 若随机数文件变动，则commit一版
         if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
             git add -A ${project_root} &&
             git commit -m "commit before run experiment"
         fi
-
+        # 加标签 运行
         git tag -a "$tag" -m "run experiment" && \
         python3 ${project_root}/code/main.py --exper "$tag"
     fi
