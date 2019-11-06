@@ -7,9 +7,66 @@ project_root=$(cd "$(dirname "${BASH_SOURCE[0]-$0}")"/..; pwd)
 . ${project_root}/code/utils/statistic/source.sh
 
 
+_tag_exist()
+{
+    local tag="$1"
+    local existing_tag=false
+    for i in $(git tag); do
+        if [ "$i" = "$tag"  ]; then
+            existing_tag=true
+        fi
+    done
+    echo $existing_tag
+}
+
 run()
 {
-    if [ "$1" = 'help' ] || [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
+
+    # 使用规则
+    # bash/zsh getopt_demo.sh 一堆参数，其前中后均可有 余参数
+    # 格式化参数：以'-'开头，必需符合本代码的解析要求
+        #             短参数                           长参数
+        # 无选项       -a                              --a-long
+        # 必有选项     -bss          -b ss             --b-long ss
+        #             -b'sds sds'   -b 'sds sds'      --b-long 'sds sds'
+        # 可有选项若无  -c                              --c-long
+        # 可有选项若有  -css          -c'sds sds'  只可短参数，选项与参数间不得有空格
+    # 余参数：不以'-'开头
+
+    local help=false
+    local rerun=false
+    local fix_seed=false
+
+    # 参数预处理
+    TEMP=$(getopt \
+        -o      rfh \
+        --long  rerun,fix-seed,help \
+        -n      '参数解析错误' \
+        -- "$@")
+    # 写法
+        #   -o     短参数 不需要分隔符
+        #   --long 长参数 用','分隔
+        #   ``无选项  `:`必有选项  `::` 可有选项
+    if [ $? != 0 ] ; then echo "格式化的参数解析错误，正在退出" >&2; run --help ; exit 1 ; fi
+    eval set -- "$TEMP" # 将$TEMP复制给 $1, $2, ...
+
+
+    # 处理参数
+    while true ; do case "$1" in
+        # 无选项
+        -h|--help)      help=true; shift ;;
+        -r|--rerun)     rerun=true ; shift ;;
+        -f|--fix-seed)  fix_seed=true ; shift ;;
+        # 处理格式化的参数
+        # '--'后是 余参数
+        --) shift ; break ;;
+        # 处理参数的代码错误
+        *) echo "参数处理错误" ; exit 1 ;;
+    esac ; done
+
+    local tag="$1"; shift
+
+    if [ "$help" = true ]; then
         echo "Usage:"
         # echo "gpuid [n,m,...] run <experiment_name>                      : for a commited status, tag it with its name, then run experiment"
         echo "gpuid [n,m,...] run <experiment_name> [--fix-seed|-f]  : for a uncommited status, commit a new experiment and tag it with its name, then run experiment"
@@ -22,25 +79,16 @@ run()
         return
     fi
 
-    if [ "$1" = '--rerun' ] || [ "$1" = '-r' ]; then
-        shift
-        if [ $# -ne 1 ]; then echo "Can't get tag to rerun, while args number is not correct."; echo; run help; return; fi
-        local tag="$1"
+    if [ "$rerun" = true ]; then
+        if [ "$(_tag_exist $tag)" = false ]; then echo "$tag not exists"; return; fi # 若tag是未有的，则报错，退出
         git checkout "$tag" && \
         python3 ${project_root}/code/main.py --exper "$tag"
     else
-        if [ $# -lt 1  ] || [ $# -gt 2 ]; then echo "Trying to set new tag, but args number is not correct."; echo; run help; return; fi
-        local tag="$1"; shift
-
-        # 若tag是已有的，则报错，退出
-        for i in $(git tag); do
-            if [ "$i" = "$tag"  ]; then
-                echo "$tag is existing"; return
-            fi
-        done
+        if [ "$(_tag_exist $tag)" = true ]; then echo "$tag is existing"; return; fi # 若tag是已有的，则报错，退出
+        # 生成随机数文件
 
         local seed_file="${project_root}/code/seed"
-        if [ "$1" = '--fix-seed' ] || [ "$1" = '-f' ]; then
+        if [ "$fix_seed" = true ]; then
             shift
             ( ! [ -f "$seed_file" ] ) &&  echo 0 > $seed_file
         else
