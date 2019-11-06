@@ -12,7 +12,7 @@ run()
     if [ "$1" = 'help' ] || [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
         echo "Usage:"
         # echo "gpuid [n,m,...] run <experiment_name>                      : for a commited status, tag it with its name, then run experiment"
-        echo "gpuid [n,m,...] run [--fix-seed|-f] <experiment_name>  : for a uncommited status, commit a new experiment and tag it with its name, then run experiment"
+        echo "gpuid [n,m,...] run <experiment_name> [--fix-seed|-f]  : for a uncommited status, commit a new experiment and tag it with its name, then run experiment"
         echo "gpuid [n,m,...] run --rerun(-r) <experiment_name>   : git checkout a git tag, then rerun the experiment"
         return
     fi
@@ -29,6 +29,16 @@ run()
         git checkout "$tag" && \
         python3 ${project_root}/code/main.py --exper "$tag"
     else
+        if [ $# -lt 1  ] || [ $# -gt 2 ]; then echo "Trying to set new tag, but args number is not correct."; echo; run help; return; fi
+        local tag="$1"
+
+        # 若tag是已有的，则报错，退出
+        for i in $(git tag); do
+            if [ "$i" = "$tag"  ]; then
+                echo "$tag is existing"; return
+            fi
+        done
+
         local seed_file="${project_root}/code/seed"
         if [ "$1" = '--fix-seed' ] || [ "$1" = '--fix-seed' ]; then
             shift
@@ -36,9 +46,6 @@ run()
         else
             echo $RANDOM > $seed_file
         fi
-
-        if [ $# -ne 1 ]; then echo "Can't get tag to set, args number is not correct."; echo; run help; return; fi
-        local tag="$1"
 
         if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
             git add -A ${project_root} &&
