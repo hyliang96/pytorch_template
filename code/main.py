@@ -14,6 +14,7 @@ from utils.statistic import Statistic
 from utils.log import Log
 from utils.tensorboard import Tensorboard
 from utils.misc import Max, symlink_force
+from utils.seed import set_seed
 
 
 from model import Net
@@ -22,6 +23,7 @@ from torch import optim
 
 def main(args):
     s = State(args)
+    set_seed(s.args.seed, s.args.cudnn_behavoir)
     s.log = Log(s.args.log_path)
     s.writer = Tensorboard(s.args.tensorboard_path)
     s.stati  = Statistic(s.args.expernameid, s.args.experid_path, s.args.root_path)

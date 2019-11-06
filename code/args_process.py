@@ -4,8 +4,7 @@ import time
 import argparse
 
 
-
-def _parse_add_to(args):
+def _parse_override_to(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('--exper', type=str, default=args.exper, help='the name of this set of experiment')
     new_args = parser.parse_args()
@@ -15,7 +14,7 @@ def _parse_add_to(args):
     return args
 
 def _process(args):
-    _parse_add_to(args)
+    _parse_override_to(args)
 
     # 后处理 argument
     args.use_cuda = torch.cuda.is_available()
@@ -23,7 +22,8 @@ def _process(args):
     # ----------------------------------------------------------------------------------------------
     # 自动生成目录路径
     # project/
-    #     code
+    #     code/
+    #         seed
     #     __statictic__/
     #         exper-list/deafult.txt -> selected.txt, finished.txt, <experiments>.txt
     #         title/default.json->all.json, <titles>.txt
@@ -89,7 +89,14 @@ def _process(args):
     # os.makedirs(args.table_path, exist_ok=True) # if no such path exists, iteratively created the dir
 
 
-
+    # 随机数
+    args.code_path = os.path.join(args.root_path, 'code')
+    args.seed_path = os.path.join(args.code_path, 'seed')
+    with open(args.seed_path,'r') as f:
+        lines = f.readlines()
+        assert len(lines) == 1
+        seed_str = lines[0].replace('\n','')
+        args.seed = int(seed_str)
 
 
 
