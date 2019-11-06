@@ -40,7 +40,7 @@ run()
         done
 
         local seed_file="${project_root}/code/seed"
-        if [ "$1" = '--fix-seed' ] || [ "$1" = '--fix-seed' ]; then
+        if [ "$1" = '--fix-seed' ] || [ "$1" = '-f' ]; then
             shift
             ( ! [ -f "$seed_file" ] ) &&  echo 0 > $seed_file
         else
