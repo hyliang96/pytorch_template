@@ -98,10 +98,10 @@ run()
         # 若随机数文件变动，则commit一版
         if ! [[ "$(cd ${project_root} && git status)" =~ 'nothing to commit, working directory clean' ]]; then
             git add -A ${project_root} &&
-            git commit -m "commit before run experiment"
+            git commit -m "run"
         fi
         # 加标签 运行
-        git tag -a "$tag" -m "run experiment" && \
+        git tag -a "$tag" -m "run" && \
         python3 ${project_root}/code/main.py --exper "$tag"
     fi
 }
