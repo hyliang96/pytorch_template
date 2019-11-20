@@ -7,21 +7,55 @@ __import__('warnings').filterwarnings('ignore',category=FutureWarning)
 from torch.utils.tensorboard.writer import SummaryWriter
 __import__('warnings').filterwarnings('default',category=FutureWarning)
 
-import threading
-import os, sys, signal
+from .thread import StoppableThread
+import subprocess
+import os
+# def Tensorboard(log_dir):
+#     def _launch_tensorboard(log_dir, output=None):
+#         output = output or os.path.join(log_dir, 'tensorboard_output')
+#         os.system('tensorboard --logdir={:s} >> {:s} 2>&1'.format(log_dir, output))
+#     def launch_tensorboard(log_dir):
+#         p = threading.Thread(target=_launch_tensorboard, args=(log_dir,))
+#         # p.daemon = True
+#         p.start()
+#         return p
+#     p = launch_tensorboard(log_dir)
+#     writer = SummaryWriter(log_dir=log_dir)
+#     return writer
 
-def Tensorboard(log_dir):
-    def _launch_tensorboard(log_dir, output=None):
-        output = output or os.path.join(log_dir, 'tensorboard_output')
-        os.system('tensorboard --logdir={:s} >> {:s} 2>&1'.format(log_dir, output))
-    def launch_tensorboard(log_dir):
-        p = threading.Thread(target=_launch_tensorboard, args=(log_dir,))
-        # p.daemon = True
-        p.start()
-        return p
-    p = launch_tensorboard(log_dir)
-    writer = SummaryWriter(log_dir=log_dir)
-    return writer
+class Tensorboard(SummaryWriter):
+    def __init__(self, log_dir, **wagrs):
+        # def _launch_tensorboard(log_dir, output=None):
+        #     output = output or os.path.join(log_dir, 'tensorboard_output')
+        #     os.system('tensorboard --logdir={:s} >> {:s} 2>&1'.format(log_dir, output))
+
+        def _launch_tensorboard(log_dir, output=None):
+            output = output or os.path.join(log_dir, 'tensorboard_output')
+            outputf = open(output, 'w')
+            subprocess.Popen(['tensorboard', '--logdir={:s}'.format(log_dir)],
+                            stdout=outputf,
+                            stderr=outputf,
+                            universal_newlines=True)
+
+        # def _launch_tensorboard(log_dir, output=None):
+        #     print('hello')
+
+        def launch_tensorboard(log_dir):
+            # p = Thread(target=_launch_tensorboard, args=(log_dir,))
+            # p = threading.Thread(target=_launch_tensorboard, args=(log_dir,))
+            p = StoppableThread(target=_launch_tensorboard, args=(log_dir,))
+            # p.daemon = True
+            p.start()
+            return p
+        self.p = launch_tensorboard(log_dir)
+        super().__init__(log_dir=log_dir, **wagrs)
+        # writer = SummaryWriter(log_dir=log_dir)
+    def close(self):
+        self.p.stop()
+        # self.p.terminate()
+
+        self.p.join()
+        super().close()
 
 def _add_model_graph(self, model, dummy_loader):
     dummy_input, dummy_label = dummy_loader.dataset[0]
@@ -152,11 +186,3 @@ SummaryWriter.add_heatmap = _add_heatmap
 # writer.add_figure('confusion matrix',figure=plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True,title='Normalized confusion matrix'),global_step=1)
 
 
-
-
-# def _quit(signum, frame):
-#     print('You choose to stop me.')
-#     sys.exit()
-
-# signal.signal(signal.SIGINT, _quit)
-# signal.signal(signal.SIGTERM, _quit)

@@ -1,40 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
+import os, sys
 from pprint import pprint
 
-from config import args
 from get_data import get_data
 from state import State
 from epoch import run_epoch
 
 from tqdm import tqdm
 from utils import patch
-from utils.statistic import Statistic
-from utils.log import Log
-from utils.tensorboard import Tensorboard
+
 from utils.misc import Max, symlink_force
-from utils.seed import set_seed
 
 
 from model import Net
 from torch import optim
 
 
-def main(args):
-    s = State(args)
-    set_seed(s.args.seed, s.args.cudnn_behavoir)
-    s.log = Log(s.args.log_path)
-    s.writer = Tensorboard(s.args.tensorboard_path)
-    s.stati  = Statistic(s.args.expernameid, s.args.experid_path, s.args.root_path)
 
-    print('----------------------------------------------------------------------------------------------')
-    print('args:')
-    print(s.args)
-    print('----------------------------------------------------------------------------------------------')
-    s.stati.add('hparam', s.args.dict())
-    # s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={})
 
+
+
+def main(s):
     s.model = Net()
     s.optimizer = optim.SGD(s.model.parameters(), lr=s.args.lr, momentum=s.args.momentum)
 
@@ -74,9 +61,27 @@ def main(args):
 
     # s.writer.add_hparams(hparam_dict={}, metric_dict={'test_acc':s.best.value})
     # s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={'best_test_acc':s.best.value})
-    s.stati.close()
-    s.writer.close()
-    s.log.close()
+
 
 if __name__ == "__main__":
-    main(args)
+    from config import args
+    s = State(args)
+    s.show_args()
+
+    try:
+        main(s)
+        s.close()
+    except KeyboardInterrupt:
+        s.close()
+        s.exit()
+    else:
+        try:
+            print('ctrl+c to close tensorboard server')
+            while True: input()
+        except KeyboardInterrupt:
+            s.exit()
+
+
+
+
+

@@ -16,9 +16,8 @@ def close_and_leave(f):
 tq.tqdm.close = close_and_leave(tq.tqdm.close)
 
 
-import os
-from tqdm._utils import _environ_cols_wrapper
 
+# from tqdm._utils import _environ_cols_wrapper
 # def set_dynamic_ncols_true(f):
 #     @wraps(f)
 #     def _f(self, *args, ncols=None, **wargs):

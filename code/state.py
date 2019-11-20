@@ -4,7 +4,10 @@ import os
 import errno
 # import warnings
 from utils import *
-
+from utils.statistic import Statistic
+from utils.log import Log
+from utils.tensorboard import Tensorboard
+from utils.seed import set_seed
 
 # def _save(self, save_path):
 #     torch.save(self._state_dict(), save_path)
@@ -21,6 +24,29 @@ class State(object):
         self.args = args
         self.model = nn.Module()
         self.optimizer = nn.Module()
+
+        # s = State(args)
+        set_seed(self.args.seed, self.args.cudnn_behavoir)
+        self.log = Log(self.args.log_path)
+        self.writer = Tensorboard(self.args.tensorboard_path)
+        self.stati  = Statistic(self.args.expernameid, self.args.experid_path, self.args.root_path)
+
+
+    def show_args(self):
+        print('----------------------------------------------------------------------------------------------')
+        print('args:')
+        print(self.args)
+        print('----------------------------------------------------------------------------------------------')
+        self.stati.add('hparam', self.args.dict())
+        # s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={})
+
+
+    def close(self):
+        self.stati.close()
+        self.log.close()
+
+    def exit(self):
+        self.writer.close()
 
     def save(self, path):
         state_dict = {
@@ -47,7 +73,7 @@ class State(object):
 
 
     def show_para(self):
-        # Print model's state_dict
+        # Print model'self state_dict
         print("Net's state_dict:")
         for param_tensor in self.model.state_dict():
             print(param_tensor, "\t", self.model.state_dict()[param_tensor].size())

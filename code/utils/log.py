@@ -52,6 +52,9 @@ class Log(object):
         self.old_stdout.flush()
 
     def close(self):
+        self.__del__()
+
+    def __del__(self):
         print('======= log end =======',
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
             '======')
