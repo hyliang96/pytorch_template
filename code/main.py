@@ -7,6 +7,7 @@ from get_data import get_data
 from state import State
 from epoch import run_epoch
 
+import time
 from tqdm import tqdm
 from utils import patch
 
@@ -39,13 +40,12 @@ def main(s):
     if 'train' in s.args.phases and 'test' in s.args.phases:
         s.best = Max('test-acc')
     for s.epoch in range(s.args.start_epoch, s.args.start_epoch + s.args.n_epoch):
-        s.epoch_pbar = tqdm(bar_format='{desc}', leave=True, desc = 'Epoch {} |'.format(s.epoch))
-        if 'train' in s.args.phases:
-            _  = run_epoch('train', s, train_loader )
-        if 'test' in s.args.phases:
-            result = run_epoch('test',  s, test_loader  )
+        s.epoch_pbar = tqdm(bar_format='{desc}', leave=True, desc='{} | Epoch {} |'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), s.epoch))
+        results = {}
+        for phase in s.args.phases:
+            results[phase] = run_epoch('test',  s, test_loader  )
         if 'train' in s.args.phases and 'test' in s.args.phases:
-            s.best.add(s.epoch, result)
+            s.best.add(s.epoch, results['test'])
         s.epoch_pbar.close()
 
         if 'train' in s.args.phases and (s.epoch - s.args.start_epoch) % s.args.save_interval == 0:

@@ -30,6 +30,8 @@ class State(object):
         self.log = Log(self.args.log_path)
         self.writer = Tensorboard(self.args.tensorboard_path)
         self.stati  = Statistic(self.args.expernameid, self.args.experid_path, self.args.root_path)
+        self.stati.add('hparam', self.args.dict())
+        # s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={})
 
 
     def show_args(self):
@@ -37,8 +39,6 @@ class State(object):
         print('args:')
         print(self.args)
         print('----------------------------------------------------------------------------------------------')
-        self.stati.add('hparam', self.args.dict())
-        # s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={})
 
 
     def close(self):
