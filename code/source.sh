@@ -35,12 +35,13 @@ run()
 
     local help=false
     local rerun=false
+    local continue=''
     local fix_seed=false
 
     # 参数预处理
     TEMP=$(getopt \
-        -o      rfh \
-        --long  rerun,fix-seed,help \
+        -o      rfch \
+        --long  rerun,fix-seed,continue,help \
         -n      'arg parse error' \
         -- "$@")
     # 写法
@@ -56,6 +57,7 @@ run()
         # 无选项
         -h|--help)      help=true; shift ;;
         -r|--rerun)     rerun=true ; shift ;;
+        -c|--continue)  continue='--continue_train' ; shift ;;
         -f|--fix-seed)  fix_seed=true ; shift ;;
         # 处理格式化的参数
         # '--'后是 余参数
@@ -84,7 +86,7 @@ run()
     if [ "$rerun" = true ]; then
         if [ "$(_tag_exist $tag)" = false ]; then echo "$tag not exists"; return; fi # 若tag是未有的，则报错，退出
         git checkout "$tag" && \
-        python3 ${project_root}/code/main.py --exper "$tag"
+        python3 ${project_root}/code/main.py --exper "$tag" $continue
     else
         if [ "$(_tag_exist $tag)" = true ]; then echo "$tag is existing"; return; fi # 若tag是已有的，则报错，退出
         # 生成随机数文件
@@ -102,7 +104,7 @@ run()
         fi
         # 加标签 运行
         git tag -a "$tag" -m "run" && \
-        python3 ${project_root}/code/main.py --exper "$tag"
+        python3 ${project_root}/code/main.py --exper "$tag" $continue
     fi
 }
 

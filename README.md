@@ -13,9 +13,15 @@ This is an experiment managing template for pytorch based on git. It can
 
 * save all traning state into a checkpoint and allow loading it to continue training
 
-The principles:
+The principles
 
-* all arguments are stastic, saved in the config.py, rather than argparsed from command lines (except the tag of a experiment), so that config can bre recorded by git
+* Minimal dependence: do not depend on database or other dashboard, so that one can install it easily.
+
+* Readability: saved results in and readable files (like json, csv) under an organized directory, rather than database.
+
+* Minimal encapsulation: to ensure flexibility for reseach codes, no high-level encapsulation dependence is applied, such as [fastai](https://github.com/fastai/fastai), [lighting](https://github.com/williamFalcon/pytorch-lightning#why-do-i-want-to-use-lightning), [iginite](https://github.com/pytorch/ignite), [torchnet](https://github.com/pytorch/tnt), [ray](https://github.com/ray-project/ray).
+
+* Reproducibility: all arguments are stastic, saved in the config.py, rather than argparsed from command lines (except the tag of a experiment), so that config can bre recorded by git.
 
 # Usage
 
@@ -30,6 +36,14 @@ The principles:
     ~~~bash
     git commit -m '<commit-message>'
     CUDA_VISIBLE_DEVICES=n1[,n2[,..]] run <expertag> [-f]    # -f to fix random seed
+    ~~~
+
+* continue an experiment
+
+    git checkout to `<expertag>` and continue an unfinished experiment
+
+    ~~~bash
+    CUDA_VISIBLE_DEVICES=n1[,n2[,..]] continue <expertag> [-f]  # -f to fix random seed
     ~~~
 
 * rerun an experiment
@@ -114,8 +128,12 @@ project/
             finished.json, record.json, xxx.json
         table/                                      tables to compare experiments
             finished.csv, record.csv, xxx.csv
+    README.md
+    .gitignore
+    .git/
 ~~~
 
+According to `.gitignore`, `/__*__` are ignored by the git for their large size.
 
 # development
 
