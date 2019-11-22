@@ -46,7 +46,12 @@ def run_epoch(stage, state, data_loader):
             pbar.postfix = 'Loss {:.4f} Acc {:.4f}%'.format(_loss.value(), _acc.value())
             pbar.update(state.args.pbar_interval)
 
+    if stage=='train':
+        state.scheduler.step()
+
     pbar.close()
+
+    # if stage != 'train' or 'train_test' not in stage:
     state.epoch_pbar.desc += ' {:6s}: loss {:.4f}, Acc {:.4f}% |'.format(stage, _loss.value(), _acc.value())
     state.epoch_pbar.update()
 
@@ -57,8 +62,8 @@ def run_epoch(stage, state, data_loader):
         y_title=data_loader.dataset.classes, x_title=data_loader.dataset.classes )
 
     result = {
-        stage+'-loss' :  _loss.value(),
-        stage+'-acc': _acc.value()
+        'loss' :  _loss.value(),
+        'acc': _acc.value()
     }
 
     return result

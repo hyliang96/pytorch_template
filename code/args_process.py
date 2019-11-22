@@ -19,6 +19,7 @@ def _process(args):
     # 后处理 argument
     args.use_cuda = torch.cuda.is_available()
     args.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
     # ----------------------------------------------------------------------------------------------
     # 自动生成目录路径
     # project/
@@ -61,12 +62,12 @@ def _process(args):
     if args.continue_epoch:
         continue_epoch_path = os.path.join(args.checkpoint_path, 'epoch_'+args.continue_epoch+'.pth')
         if os.path.islink(continue_epoch_path):
-            args.continue_epoch = os.path.basename( os.readlink(continue_epoch_path) ).replace('epoch_','').replace('.pth','')
+            args.continue_epoch = os.path.basename(os.readlink(continue_epoch_path) ).replace('epoch_', '').replace('.pth', '')
         if 'train' in args.phases:
             args.start_epoch = int(args.continue_epoch) + 1
         else:
             args.start_epoch = int(args.continue_epoch)
-    args.load_path = args.load_path or ( os.path.join(args.checkpoint_path, 'epoch_'+args.continue_epoch+'.pth') if args.continue_epoch else '')
+    args.load_path = args.load_path or (os.path.join(args.checkpoint_path, 'epoch_'+args.continue_epoch+'.pth') if args.continue_epoch else '')
     #           tensorboard/
     args.tensorboard_path = os.path.join(args.experid_path , 'tensorboard')
     os.makedirs(args.tensorboard_path, exist_ok=True)
@@ -88,6 +89,9 @@ def _process(args):
     # args.table_path = os.path.join(args.stati_path , 'table')
     # os.makedirs(args.table_path, exist_ok=True) # if no such path exists, iteratively created the dir
 
+
+    assert args.start_epoch <= args.end_epoch, \
+        "error args: start_epoch = {}, end_epoch = {}, while it should be start_epoch <= end_epoch".format(args.start_epoch, args.end_epoch)
 
     # 随机数
     args.code_path = os.path.join(args.root_path, 'code')

@@ -8,6 +8,8 @@ from utils.statistic import Statistic
 from utils.log import Log
 from utils.tensorboard import Tensorboard
 from utils.seed import set_seed
+from utils.misc import symlink_force
+from utils.record import Record
 
 # def _save(self, save_path):
 #     torch.save(self._state_dict(), save_path)
@@ -22,8 +24,10 @@ from utils.seed import set_seed
 class State(object):
     def __init__(self, args):
         self.args = args
-        self.model = nn.Module()
-        self.optimizer = nn.Module()
+        self.model = None
+        self.optimizer = None
+        self.scheduler = None
+        self.epoch = 0
 
         # s = State(args)
         set_seed(self.args.seed, self.args.cudnn_behavoir)
@@ -32,7 +36,7 @@ class State(object):
         self.stati  = Statistic(self.args.expernameid, self.args.experid_path, self.args.root_path)
         self.stati.add('hparam', self.args.dict())
         # s.writer.add_hparams(hparam_dict=s.args.dict(), metric_dict={})
-
+        self.record = Record()
 
     def show_args(self):
         print('----------------------------------------------------------------------------------------------')
@@ -48,19 +52,30 @@ class State(object):
     def exit(self):
         self.writer.close()
 
-    def save(self, path):
-        state_dict = {
+    def save(self, dir_path, filename, last_epoch=None, best_epoch=None):
+        checkpoint = {
             "model": self.model.state_dict(),
-            "optimizer": self.optimizer.state_dict()
+            "optimizer": self.optimizer.state_dict(),
+            'scheduler': self.scheduler.state_dict(),
+            'record': self.record,
+            'epoch': self.epoch
         }
-        torch.save(state_dict, path)
+        torch.save(checkpoint, os.path.join(dir_path, filename))
+
+        if last_epoch:
+            symlink_force('epoch_' + str(last_epoch) + '.pth', os.path.join(dir_path, 'epoch_latest.pth'))
+
+        if best_epoch:
+            symlink_force('epoch_' + str(best_epoch) + '.pth', os.path.join(dir_path, 'epoch_best.pth'))
 
     def load(self, path):
         if os.path.isfile(path):
-            state_dict = torch.load(path, map_location=self.args.device)
-            # print('checkpoint =', checkpoint)
-            self.model.load_state_dict(state_dict['model'])
-            self.optimizer.load_state_dict(state_dict['optimizer'])
+            checkpoint = torch.load(path, map_location=self.args.device)
+            self.model.load_state_dict(checkpoint['model'])
+            self.optimizer.load_state_dict(checkpoint['optimizer'])
+            self.scheduler.load_state_dict(checkpoint['scheduler'])
+            self.record = checkpoint['record']
+            # checkpoint['epoch']
         else:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
             # warnings.warn('checkpoint path '+path+' not exist; go on without load it.')

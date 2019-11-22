@@ -25,7 +25,7 @@ class Log(object):
 
 # 可配合tqdm使用，tqdm 在屏幕上清屏进度条，则输出到log文件也清屏进度条
 
-    def __init__(self, filename='', mode='w'):
+    def __init__(self, filename='', mode='a'):
         # filename =
          # time.strftime("%m-%d_%H:%M:%S", time.localtime())+filename
         self.f = open(filename, mode)
