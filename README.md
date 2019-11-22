@@ -21,7 +21,7 @@ The principles
 
 * Minimal encapsulation: to ensure flexibility for reseach codes, no high-level encapsulation dependence is applied, such as [fastai](https://github.com/fastai/fastai), [lighting](https://github.com/williamFalcon/pytorch-lightning#why-do-i-want-to-use-lightning), [iginite](https://github.com/pytorch/ignite), [torchnet](https://github.com/pytorch/tnt), [ray](https://github.com/ray-project/ray).
 
-* Reproducibility: all arguments are stastic, saved in the config.py, rather than argparsed from command lines (except the tag of a experiment), so that config can bre recorded by git.
+* Reproducibility: all arguments are stastic, saved in the config.py, rather than argparsed from command lines (except the tag of an experiment, whether continue an experiment), so that config can bre recorded by git.
 
 # Usage
 
