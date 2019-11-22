@@ -38,6 +38,14 @@ The principles
     CUDA_VISIBLE_DEVICES=n1[,n2[,..]] run <expertag> [-f]    # -f to fix random seed
     ~~~
 
+* continue an experiment
+
+    git checkout to `<expertag>` and continue an unfinished experiment
+
+    ~~~bash
+    CUDA_VISIBLE_DEVICES=n1[,n2[,..]] continue <expertag> [-f]  # -f to fix random seed
+    ~~~
+
 * rerun an experiment
 
     git checkout to `<expertag>`
