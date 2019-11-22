@@ -40,8 +40,8 @@ run()
 
     # 参数预处理
     TEMP=$(getopt \
-        -o      rfh \
-        --long  rerun,fix-seed,help \
+        -o      rfch \
+        --long  rerun,fix-seed,continue,help \
         -n      'arg parse error' \
         -- "$@")
     # 写法
