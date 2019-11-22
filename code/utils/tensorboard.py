@@ -10,6 +10,7 @@ __import__('warnings').filterwarnings('default',category=FutureWarning)
 from .thread import StoppableThread
 import subprocess
 import os
+import re
 # def Tensorboard(log_dir):
 #     def _launch_tensorboard(log_dir, output=None):
 #         output = output or os.path.join(log_dir, 'tensorboard_output')
@@ -28,9 +29,9 @@ class Tensorboard(SummaryWriter):
         # def _launch_tensorboard(log_dir, output=None):
         #     output = output or os.path.join(log_dir, 'tensorboard_output')
         #     os.system('tensorboard --logdir={:s} >> {:s} 2>&1'.format(log_dir, output))
+        tb_output = os.path.join(log_dir, 'tensorboard_output')
 
-        def _launch_tensorboard(log_dir, output=None):
-            output = output or os.path.join(log_dir, 'tensorboard_output')
+        def _launch_tensorboard(log_dir, output='/dev/null'):
             outputf = open(output, 'w')
             subprocess.Popen(['tensorboard', '--logdir={:s}'.format(log_dir)],
                             stdout=outputf,
@@ -43,12 +44,23 @@ class Tensorboard(SummaryWriter):
         def launch_tensorboard(log_dir):
             # p = Thread(target=_launch_tensorboard, args=(log_dir,))
             # p = threading.Thread(target=_launch_tensorboard, args=(log_dir,))
-            p = StoppableThread(target=_launch_tensorboard, args=(log_dir,))
+            p = StoppableThread(target=_launch_tensorboard, args=(log_dir, tb_output))
             # p.daemon = True
             p.start()
             return p
         self.p = launch_tensorboard(log_dir)
         super().__init__(log_dir=log_dir, **wagrs)
+
+
+        print('TensorBoard:')
+        get = False
+        while not get:
+            with open(tb_output, 'r') as f:
+                for line in f:
+                    if re.match('TensorBoard [0-9.]+ at', line) or re.match('port', line):
+                        print(line, end='')
+                        get = True
+                        break
         # writer = SummaryWriter(log_dir=log_dir)
     def close(self):
         self.p.stop()

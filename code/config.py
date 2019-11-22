@@ -27,12 +27,12 @@ args.val_rate = 0.3  # val set 占 train set 的比例
 args.cudnn_behavoir = 'normal'
 # ----------------------------------------------------------------------------------------------
 
-args.exper = "test2" # "2019-11-22_19-48-28"
-args.experid = "0" # '0'
+args.expertag = "test2" # "2019-11-22_19-48-28"
+args.experid = "4" # '0'
 
 # 若写下属任意一个，则load，否则不load
 # 继续训练，或测试某个epoch的checkpoint
-args.continue_epoch = "3" # 'latest', 'best', '0', '1', '2' ...
+args.continue_epoch = "" # 'last', 'best', '0', '1', '2' ...
 # 单纯加载，不必继续训练，建议写绝对路径
 args.load_path = ""
 

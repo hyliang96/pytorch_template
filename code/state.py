@@ -1,4 +1,6 @@
 import torch
+from torch import optim
+from torch.optim import lr_scheduler
 from torch import nn
 import os
 import errno
@@ -63,7 +65,7 @@ class State(object):
         torch.save(checkpoint, os.path.join(dir_path, filename))
 
         if last_epoch:
-            symlink_force('epoch_' + str(last_epoch) + '.pth', os.path.join(dir_path, 'epoch_latest.pth'))
+            symlink_force('epoch_' + str(last_epoch) + '.pth', os.path.join(dir_path, 'epoch_last.pth'))
 
         if best_epoch:
             symlink_force('epoch_' + str(best_epoch) + '.pth', os.path.join(dir_path, 'epoch_best.pth'))
@@ -71,9 +73,10 @@ class State(object):
     def load(self, path):
         if os.path.isfile(path):
             checkpoint = torch.load(path, map_location=self.args.device)
+            assert self.model, 'self.model is not defined before laoding a checkpoint'
             self.model.load_state_dict(checkpoint['model'])
-            self.optimizer.load_state_dict(checkpoint['optimizer'])
-            self.scheduler.load_state_dict(checkpoint['scheduler'])
+            if self.optimizer: self.optimizer.load_state_dict(checkpoint['optimizer'])
+            if self.scheduler: self.scheduler.load_state_dict(checkpoint['scheduler'])
             self.record = checkpoint['record']
             # checkpoint['epoch']
         else:
@@ -83,9 +86,8 @@ class State(object):
     def deploy(self):
         self.model = nn.DataParallel(self.model)
         self.model.to(self.args.device)
-
-        self.optimizer.to(self.args.device)
-
+        if self.optimizer: self.optimizer.to(self.args.device)
+        # if self.scheduler: self.scheduler.to(self.args.device)
 
     def show_para(self):
         # Print model'self state_dict

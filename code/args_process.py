@@ -6,7 +6,7 @@ import argparse
 
 def _parse_override_to(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exper', type=str, default=args.exper, help='the name of this set of experiment')
+    parser.add_argument('--exper', type=str, default=args.expertag, help='the name of this set of experiment')
     new_args = parser.parse_args()
 
     for key,value in vars(new_args).items():
@@ -25,18 +25,21 @@ def _process(args):
     # project/
     #     code/
     #         seed
-    #     __statictic__/
-    #         exper-list/deafult.txt -> selected.txt, finished.txt, <experiments>.txt
-    #         title/default.json->all.json, <titles>.txt
-    #         table/selected.csv, finished.csv <experiments-titles>.csv
     #     __data__/
     #     __result__/
-    #         [exper]/
+    #         [expertag]/
     #             [experid]/
     #                 log
     #                 tensorboard/
     #                 checkpoint/
     #                 statistic.json
+    #     __statistic__/
+    #         exper-list/
+    #                 finished.txt, record.txt
+    #         title/
+    #                 finished.json, record.json
+    #         table/
+    #                 finished.csv, record.csv
 
     # absolute path of this file and then goto its ../
     args.root_path = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
@@ -45,16 +48,16 @@ def _process(args):
     # __result__/
     args.result_path = os.path.join(args.root_path , '__result__')
 
-    #   [exper]/
-    args.exper = args.exper or time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
-    args.exper_path = os.path.join(args.result_path, args.exper)
-    os.makedirs(args.exper_path, exist_ok=True) # if no such path exists, iteratively created the dir
+    #   [expertag]/
+    args.expertag = args.expertag or time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
+    args.expertag_path = os.path.join(args.result_path, args.expertag)
+    os.makedirs(args.expertag_path, exist_ok=True) # if no such path exists, iteratively created the dir
 
     #       [experid]/
-    dirnames = [d for d in os.listdir(args.exper_path) if os.path.isdir(os.path.join(args.exper_path, d)) and d[0]!=0]
+    dirnames = [d for d in os.listdir(args.expertag_path) if os.path.isdir(os.path.join(args.expertag_path, d)) and d[0]!=0]
     args.experid = args.experid or ( '0' if dirnames == [] else str(max([int(name) for name in dirnames]) + 1) )
-    args.expernameid = args.exper + '/' + args.experid
-    args.experid_path = os.path.join(args.exper_path, args.experid)
+    args.expernameid = args.expertag + '/' + args.experid
+    args.experid_path = os.path.join(args.expertag_path, args.experid)
 
     #           checkpoint/
     args.checkpoint_path = os.path.join(args.experid_path , 'checkpoints')
@@ -73,26 +76,12 @@ def _process(args):
     os.makedirs(args.tensorboard_path, exist_ok=True)
     #           log
     args.log_path = os.path.join(args.experid_path , 'log')
-    #           statistic.json
-    # args.exper_stati_path = os.path.join(args.experid_path , 'statistic.json')
-
-    # __statistic__/
-    # args.stati_path = os.path.join(args.root_path , '__statistic__')
-    # os.makedirs(args.stati_path, exist_ok=True) # if no such path exists, iteratively created the dir
-    # #       exper-list/
-    # args.exper_list_path = os.path.join(args.stati_path , 'exper-list')
-    # os.makedirs(args.exper_list_path, exist_ok=True) # if no such path exists, iteratively created the dir
-    # #       title/
-    # args.title_path = os.path.join(args.stati_path , 'title')
-    # os.makedirs(args.title_path, exist_ok=True) # if no such path exists, iteratively created the dir
-    # #       table/
-    # args.table_path = os.path.join(args.stati_path , 'table')
-    # os.makedirs(args.table_path, exist_ok=True) # if no such path exists, iteratively created the dir
 
 
     assert args.start_epoch <= args.end_epoch, \
         "error args: start_epoch = {}, end_epoch = {}, while it should be start_epoch <= end_epoch".format(args.start_epoch, args.end_epoch)
 
+    # ----------------------------------------------------------------------------------------------
     # 随机数
     args.code_path = os.path.join(args.root_path, 'code')
     args.seed_path = os.path.join(args.code_path, 'seed')
