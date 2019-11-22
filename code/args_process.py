@@ -6,7 +6,7 @@ import argparse
 
 def _parse_override_to(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-e', '--exper', type=str, default=args.expertag, help='the name of this set of experiment')
+    parser.add_argument('-e', '--expertag', type=str, default=args.expertag, help='the name of this set of experiment')
     parser.add_argument('-c', '--continue_train',default=False, action='store_true', help='continue from the last epoch')
     new_args = parser.parse_args()
 
@@ -16,10 +16,10 @@ def _parse_override_to(args):
     if args.continue_train:
         args.continue_epoch = 'last'
 
-    return args
+    # return args
 
 def _process(args):
-    args = _parse_override_to(args)
+    _parse_override_to(args)
 
     # 后处理 argument
     args.use_cuda = torch.cuda.is_available()
