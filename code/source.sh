@@ -57,7 +57,7 @@ run()
         # 无选项
         -h|--help)      help=true; shift ;;
         -r|--rerun)     rerun=true ; shift ;;
-        -c|--continue)  continue='--continue' ; shift ;;
+        -c|--continue)  continue='--continue_train' ; shift ;;
         -f|--fix-seed)  fix_seed=true ; shift ;;
         # 处理格式化的参数
         # '--'后是 余参数
