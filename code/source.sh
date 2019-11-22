@@ -86,7 +86,7 @@ run()
     if [ "$rerun" = true ]; then
         if [ "$(_tag_exist $tag)" = false ]; then echo "$tag not exists"; return; fi # 若tag是未有的，则报错，退出
         git checkout "$tag" && \
-        python3 ${project_root}/code/main.py --exper "$tag"
+        python3 ${project_root}/code/main.py --exper "$tag" $continue
     else
         if [ "$(_tag_exist $tag)" = true ]; then echo "$tag is existing"; return; fi # 若tag是已有的，则报错，退出
         # 生成随机数文件
