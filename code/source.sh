@@ -35,6 +35,7 @@ run()
 
     local help=false
     local rerun=false
+    local continue=''
     local fix_seed=false
 
     # 参数预处理
@@ -56,6 +57,7 @@ run()
         # 无选项
         -h|--help)      help=true; shift ;;
         -r|--rerun)     rerun=true ; shift ;;
+        -c|--continue)  continue='--continue' ; shift ;;
         -f|--fix-seed)  fix_seed=true ; shift ;;
         # 处理格式化的参数
         # '--'后是 余参数
@@ -102,7 +104,7 @@ run()
         fi
         # 加标签 运行
         git tag -a "$tag" -m "run" && \
-        python3 ${project_root}/code/main.py --exper "$tag"
+        python3 ${project_root}/code/main.py --exper "$tag" $continue
     fi
 }
 

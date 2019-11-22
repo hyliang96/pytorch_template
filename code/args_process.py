@@ -6,8 +6,12 @@ import argparse
 
 def _parse_override_to(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exper', type=str, default=args.expertag, help='the name of this set of experiment')
+    parser.add_argument('-e', '--exper', type=str, default=args.expertag, help='the name of this set of experiment')
+    parser.add_argument('-c', '--continue', default=False, action='store_true', help='continue from the last epoch')
     new_args = parser.parse_args()
+
+    if args.continue:
+        args.continue_epoch = 'last'
 
     for key,value in vars(new_args).items():
         setattr(args, key, value)
@@ -54,8 +58,18 @@ def _process(args):
     os.makedirs(args.expertag_path, exist_ok=True) # if no such path exists, iteratively created the dir
 
     #       [experid]/
-    dirnames = [d for d in os.listdir(args.expertag_path) if os.path.isdir(os.path.join(args.expertag_path, d)) and d[0]!=0]
-    args.experid = args.experid or ( '0' if dirnames == [] else str(max([int(name) for name in dirnames]) + 1) )
+    dirnames = [d for d in os.listdir(args.expertag_path) if os.path.isdir(os.path.join(args.expertag_path, d)) and d[0] != 0]
+
+    # if dirnames == []:
+    #     experid = 0
+    # else:
+    #     experid = str(max([int(name) for name in dirnames])
+    #     if not args.continue:
+    #         experid = + 1
+    # args.experid = args.experid or experid
+
+    args.experid = args.experid or (0 if dirnames == []
+        else (str(max([int(name) for name in dirnames]) + (0 if args.continue else 1)   ))
     args.expernameid = args.expertag + '/' + args.experid
     args.experid_path = os.path.join(args.expertag_path, args.experid)
 
