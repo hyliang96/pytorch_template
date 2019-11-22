@@ -19,7 +19,7 @@ def _parse_override_to(args):
     return args
 
 def _process(args):
-    _parse_override_to(args)
+    args = _parse_override_to(args)
 
     # 后处理 argument
     args.use_cuda = torch.cuda.is_available()
