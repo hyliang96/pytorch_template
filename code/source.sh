@@ -110,7 +110,9 @@ run()
 
 
 alias rerun='run --rerun'
+alias re='rerun'
 alias continue='run --continue'
+alias con='continue'
 
 expls()
 {

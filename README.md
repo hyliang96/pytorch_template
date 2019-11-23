@@ -45,7 +45,7 @@ The principles
     git checkout to `<expertag>` and continue an unfinished experiment
 
     ~~~bash
-    CUDA_VISIBLE_DEVICES=n1[,n2[,..]] continue <expertag> [-f]  # -f to fix random seed
+    CUDA_VISIBLE_DEVICES=n1[,n2[,..]] con|continue <expertag> [-f]  # -f to fix random seed
     ~~~
 
 * rerun an experiment
@@ -53,7 +53,7 @@ The principles
     git checkout to `<expertag>`
 
     ~~~bash
-    CUDA_VISIBLE_DEVICES=n1[,n2[,..]] rerun <expertag> [-f]  # -f to fix random seed
+    CUDA_VISIBLE_DEVICES=n1[,n2[,..]] re|rerun <expertag> [-f]  # -f to fix random seed
     ~~~
 
 ## Record experiments and make tables
