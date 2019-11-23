@@ -83,7 +83,7 @@ run()
         return
     fi
 
-    if [ "$rerun" = true ]; then
+    if [ "$rerun" = true ] || [ "$continue" != '' ]; then
         if [ "$(_tag_exist $tag)" = false ]; then echo "$tag not exists"; return; fi # 若tag是未有的，则报错，退出
         git checkout "$tag" && \
         python3 ${project_root}/code/main.py --exper "$tag" $continue
@@ -110,23 +110,33 @@ run()
 
 
 alias rerun='run --rerun'
-
+alias continue='run --continue'
 
 expls()
 {
+    echo $project_root/__result__
+    local epxertag
     if [ $# -eq 0 ]; then
         ls $project_root/__result__
+    elif [ "$1" = '-r' ]; then
+        for epxertag in $(ls $project_root/__result__); do
+            echo -n "    $epxertag:  "
+            ls $project_root/__result__/$epxertag
+        done
     else
-        for i in "$@"; do
-            echo $i:
-            local dir_path="$project_root/__result__/$i"
-            echo '        '$dir_path
-            ls $dir_path
+        for epxertag in "$@"; do
+            echo -n "    $epxertag:  "
+            ls $project_root/__result__/$epxertag
         done
     fi
 }
 
 
+# if [ -n "$ZSH_VERSION" ]; then
+#     ls_itb() { : }
+#     compdef _ls ls_itb
+#     alias itb="ls_itb ${project_root}/__result__"
+# fi
 
 # tensorboard for my pytorch-template
 itb()
@@ -154,7 +164,7 @@ itb()
             local dir_path="$exper_name/tensorboard"
             local exper_name="$(basename $(cd "$exper_name/.." && pwd -P ))/$(basename $(cd "$exper_name" && pwd -P ))"
         else
-            local dir_path="${project_root}/__result__/$exper_name/tensorboard"
+            local dir_path="${project_root}/__result__/$exper_name"
         fi
         local dir_arg="${dir_arg}${exper_name}:${dir_path},"
     done

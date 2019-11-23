@@ -27,8 +27,8 @@ args.val_rate = 0.3  # val set 占 train set 的比例
 args.cudnn_behavoir = 'normal'
 # ----------------------------------------------------------------------------------------------
 
-args.expertag = "test2" # "2019-11-22_19-48-28"
-args.experid = "4" # '0'
+args.expertag = "" # "2019-11-22_19-48-28"
+args.experid = "" # '0'
 
 # 若写下属任意一个，则load，否则不load
 # 继续训练，或测试某个epoch的checkpoint

@@ -69,8 +69,8 @@ def _process(args):
     #         experid = + 1
     # args.experid = args.experid or experid
 
-    args.experid = args.experid or (0 if dirnames == []
-        else (str(max([int(name) for name in dirnames]) + (0 if args.continue_train else 1)   )))
+    args.experid = str( args.experid or (0 if dirnames == []
+        else (str(max([int(name) for name in dirnames]) + (0 if args.continue_train else 1)   ))) )
     args.expernameid = args.expertag + '/' + args.experid
     args.experid_path = os.path.join(args.expertag_path, args.experid)
 
