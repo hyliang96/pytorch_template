@@ -104,7 +104,7 @@ run()
         fi
         # 加标签 运行
         git tag -a "$tag" -m "run" && \
-        python3 ${project_root}/code/main.py --exper "$tag" $continue
+        python3 ${project_root}/code/main.py --exper "$tag"
     fi
 }
 
