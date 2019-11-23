@@ -23,6 +23,12 @@ The principles
 
 * Reproducibility: all arguments are stastic, saved in the config.py, rather than argparsed from command lines (except the tag of an experiment, whether continue an experiment), so that config can bre recorded by git.
 
+# Install
+
+~~~bash
+pip install -r code/requirements.txt
+~~~
+
 # Usage
 
 * always source the command line tools when entering the project
