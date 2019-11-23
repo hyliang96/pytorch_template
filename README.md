@@ -31,6 +31,8 @@ The principles
     . ./code/source.sh
     ~~~
 
+## Run experiments
+
 * record codes and run with tag `<expertag>`
 
     ~~~bash
@@ -53,6 +55,8 @@ The principles
     ~~~bash
     CUDA_VISIBLE_DEVICES=n1[,n2[,..]] rerun <expertag> [-f]  # -f to fix random seed
     ~~~
+
+## Record experiments and make tables
 
 * record a set of experiments
 
@@ -83,6 +87,23 @@ The principles
     ~~~bash
     table [xxx]               # xxx=record for default
     ~~~
+
+## start tensorboard
+
+* list all experiment
+
+~~~bash
+expls               # list all expertag
+expels <expertag>   # list all experid under the <expertag>
+~~~
+
+* compare experiments in tensorboard
+
+~~~bash
+itb <expertag1>[/<experid1>] [<expertag2>[/<experid2>] ...]
+ # <expertag1> for all <experid1>s under <expertag1>
+ # <expertag1>/<experid1> for a specific <experid1> under <expertag1>
+~~~
 
 # misc
 
@@ -143,6 +164,6 @@ According to `.gitignore`, `/__*__` are ignored by the git for their large size.
 
 - [x] save/load checkpoint, [reference](https://discuss.pytorch.org/t/how-to-save-and-load-lr-scheduler-stats-in-pytorch/20208)
 
-- [ ] append to tensorboard events
+- [x] it is not suppoed to append to tensorboard events [details](https://github.com/tensorflow/tensorflow/issues/2399#issuecomment-219837074); just write to a new tensorboard event under the same dir. tensorboard sever will how them as the same experiment when you use `itb`
 
 
