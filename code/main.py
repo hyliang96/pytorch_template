@@ -68,6 +68,7 @@ def main(s):
 
 
 if __name__ == "__main__":
+
     from config import args
     s = State(args)
     s.show_args()

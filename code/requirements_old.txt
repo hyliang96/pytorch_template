@@ -1,10 +1,10 @@
 # install python3, python2 is not supported by me
-torch
-torchvision
-torchnet
-tensorboard
-tqdm
-jsoncomment
-matplotlib
+torch==1.3.0
+torchvision==0.4.1
+torchnet==0.0.4
+tensorboard==2.0.0
+tqdm==4.36.1
+jsoncomment==0.4.2
+matplotlib==3.1.1
 git+https://github.com/hyliang96/PrettyErrors
 # require 2.7G disk to install them

@@ -36,6 +36,8 @@ class Log(object):
             # 格式化成2016-03-20 11:45:39形式
             '======')
 
+        self.closed = False
+
     def write(self, data):
         self.f.write(data)
         # sys.__stdout__.write(data)
@@ -52,16 +54,19 @@ class Log(object):
         self.old_stdout.flush()
 
     def close(self):
-        self.__del__()
-
-    def __del__(self):
+        self.flush()
         print('======= log end =======',
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
             '======')
-        self.flush()
         self.f.close()
         # sys.stdout=sys.__stdout__
         sys.stdout = self.old_stdout
+        self.closed = True
+
+    def __del__(self):
+        if not self.closed:
+            self.close()
+
 
 def cursor_back(func):
     # 光标回到所在行首，且只输出到屏幕，不输出到别处

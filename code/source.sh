@@ -3,9 +3,25 @@
 # get absoltae path to the dir this is in, work in bash, zsh
 # if you want transfer symbolic link to true path, just change `pwd` to `pwd -P`
 project_root=$(cd "$(dirname "${BASH_SOURCE[0]-$0}")"/..; pwd)
+project_venv="$project_root/code/venv"
 
 . ${project_root}/code/utils/statistic/source.sh
 
+
+if ! [ -d "$project_venv" ]; then
+    echo 'there is no virtualenv at'"$project_venv" >&2
+    echo 'install it by running `install_venv`'
+else
+    source "$project_venv/bin/activate"
+fi
+
+install_venv() {
+    ( ! [ -d "$project_venv" ] ) && \
+        virtualenv --no-site-packages -p python3 $project_venv
+    source "$project_venv/bin/activate"
+    python -m pip install -r $project_root/code/requirements.txt
+    python -m pretty_errors -s -p
+}
 
 _tag_exist()
 {
