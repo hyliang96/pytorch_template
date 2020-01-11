@@ -21,6 +21,7 @@ install_venv() {
     source "$project_venv/bin/activate"
     python -m pip install -r $project_root/code/requirements.txt
     python -m pretty_errors -s -p
+    ln -sf $project_root/code/utils/pretty_errors.pth  $(py -m pretty_errors -f | grep pretty_errors.pth)
 }
 
 _tag_exist()

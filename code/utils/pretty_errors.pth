@@ -1,0 +1,2 @@
+/Users/mac/miniconda3/lib/python3.7/site-packages
+import pretty_errors; pretty_errors.configure(filename_display=pretty_errors.FILENAME_FULL)  # keep on one line, for options see https://github.com/onelivesleft/PrettyErrors/blob/master/README.md
