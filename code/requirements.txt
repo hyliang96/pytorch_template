@@ -6,5 +6,6 @@ tensorboard
 tqdm
 jsoncomment
 matplotlib
-git+https://github.com/hyliang96/PrettyErrors
+pretty_errors
+# git+https://github.com/hyliang96/PrettyErrors
 # require 2.7G disk to install them
