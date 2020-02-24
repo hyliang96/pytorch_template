@@ -31,17 +31,21 @@ class Log(object):
         self.f = open(filename, mode)
         self.old_stdout = sys.stdout
         sys.stdout = self
-        print('====== log start ======',
-            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+        self.write('====== log start ====== ' + \
+            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + \
             # 格式化成2016-03-20 11:45:39形式
-            '======')
+            ' ======\n')
 
-        self.closed = False
+        self.is_closed = False
 
     def write(self, data):
         self.f.write(data)
+        self.f.flush()
         # sys.__stdout__.write(data)
         self.old_stdout.write(data)
+
+    def print(self, data):
+        self.write(data+'\n')
 
     def flush(self):
         # 例
@@ -54,17 +58,17 @@ class Log(object):
         self.old_stdout.flush()
 
     def close(self):
-        self.flush()
-        print('======= log end =======',
-            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-            '======')
+        self.write('======= log end ======= ' + \
+            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + \
+            ' ======\n')
+        self.f.flush()
         self.f.close()
         # sys.stdout=sys.__stdout__
         sys.stdout = self.old_stdout
-        self.closed = True
+        self.is_closed = True
 
     def __del__(self):
-        if not self.closed:
+        if not self.is_closed:
             self.close()
 
 
