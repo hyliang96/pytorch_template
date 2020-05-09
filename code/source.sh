@@ -176,7 +176,8 @@ itb()
         exper_names=("$exper_name")
     fi
 
-    local dir_arg='--logdir_spec='
+    # local dir_arg='--logdir_spec='
+    local dir_arg='--logdir='
     local exper_name
     for exper_name in "${exper_names[@]}"; do
         if [ -d "$exper_name"  ]; then
